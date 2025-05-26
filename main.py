@@ -77,6 +77,19 @@ def submenu_clientes():
         elif op == '0': break
         else: print("Opção inválida.")
 
+
+
+
+
+'''MANTER FORMATAÇÂO DOS DADOS COMO NO EXEMPLO ABAIXO
+
+f"{c['cpf']};{c['nome']};{c['endereco']};{c['tel_fixo']};{c['tel_cel']};{c['data_nasc'].isoformat()}"
+
+com ; entre os campos e data no formato (AAAA-MM-DD)
+
+pra n dar BO
+
+'''
 # =============== Reservas =========================
 
 
