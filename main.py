@@ -80,12 +80,57 @@ def submenu_clientes():
 # =============== Reservas =========================
 
 
+def submenu_reservas():
+    return
 # =============== Apartamentos =========================
 
-
+def submenu_apartamentos():
+    return
 # =============== ReservaApart =========================
 
-
+def submenu_reserva_apto():
+    return
 # =============== Relatórios =========================
 
+
+def submenu_relatorios():
+    return
+
 # =============== Menu Principal =========================
+def main():
+    while True:
+        print("\n" + "="*50)
+        print("           SISTEMA DE GERENCIAMENTO HOTELEIRO")
+        print("="*50)
+        print("│  1 │ Gerenciar Clientes")
+        print("│  2 │ Gerenciar Reservas")
+        print("│  3 │ Gerenciar Apartamentos")
+        print("│  4 │ Vincular Reserva-Apartamento")
+        print("│  5 │ Relatórios e Consultas")
+        print("│  6 │ Sair do Sistema")
+        print("="*50)
+        
+        opcao = input("Digite sua opção [1-6]: ").strip()
+        
+        if opcao == '1':
+            submenu_clientes()
+        elif opcao == '2':
+            submenu_reservas()
+        elif opcao == '3':
+            submenu_apartamentos()
+        elif opcao == '4':
+            submenu_reserva_apto()
+        elif opcao == '5':
+            submenu_relatorios()
+        elif opcao == '6':
+            print("\n" + "="*50)
+            print("    Obrigado por usar nosso sistema!")
+            print("           Até logo! 👋")
+            print("="*50)
+            break
+        else:
+            print("\n❌ Opção inválida! Por favor, escolha uma opção entre 1 e 6.")
+            input("Pressione ENTER para continuar...")
+
+
+main()
