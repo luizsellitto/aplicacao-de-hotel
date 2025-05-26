@@ -14,7 +14,8 @@ def ler_arquivo(nome_arquivo):
                 if linha_limpa:
                     linhas.append(linha_limpa)
             return linhas
-    except IOError:
+    except:
+        print(f"Erro ao ler o arquivo: {nome_arquivo}")
         return []
 
 
@@ -24,5 +25,23 @@ def gravar_arquivo(nome_arquivo, linhas):
             if linhas:
                 arquivo.write('\n'.join(linhas) + '\n')
         return True
-    except IOError:
+    except:
+        print(f"Erro ao gravar o arquivo: {nome_arquivo}")
         return False
+
+
+# =============== Clientes =========================
+
+
+# =============== Reservas =========================
+
+
+# =============== Apartamentos =========================
+
+
+# =============== ReservaApart =========================
+
+
+# =============== Relatórios =========================
+
+# =============== Menu Principal =========================
