@@ -1,6 +1,11 @@
 
+
+# Importa OS para manipulação de arquivos
 import os
+# Importa datetime para manipulação mais precisa de datas
 from datetime import datetime
+
+
 # =============== Helpers =========================
 
 def ler_arquivo(nome_arquivo):
@@ -66,13 +71,25 @@ def listar_clientes():
             print("Não há clientes cadastrados.")
         else:
             for c in clientes:
-                print(c)
+                print(f"CPF: {c['cpf']}, Nome: {c['nome']}, Endereço: {c['endereco']}, "
+                      f"Telefone Fixo: {c['tel_fixo']}, Telefone Celular: {c['tel_cel']}, "
+                      f"Data de Nascimento: {c['data_nasc'].isoformat()}")
 
     except Exception as e:
         print(f"Erro ao listar clientes: {e}")
 
 def buscar_cliente(cpf):
-    return
+    try:
+        # Verifica se o arquivo existe e lê as linhas e procura o cliente pelo CPF
+        for l in ler_arquivo('clientes.txt'):
+            c = parse_cliente(l)
+            if c['cpf'] == cpf:
+                return c
+        return  # Retorna se não encontrar o cliente, não precisa de mensagem
+                # Usuário não precisa saber que aquele CPF não está cadastrado
+    except Exception as e:
+        print(f"Erro ao buscar cliente: {e}")
+        return
 
 def incluir_cliente():
 
@@ -101,11 +118,80 @@ def incluir_cliente():
 
 
 def alterar_cliente():
+    try:
+        cpf = input("Digite o CPF do cliente a ser alterado: ").strip()
+        linhas = ler_arquivo('clientes.txt')
+        nova_lista = []
+        achou = False
 
-    return
+        for l in linhas:
+
+            # Não consegui reutilizar a função buscar_cliente, pois ela retorna o cliente e não a linha
+            c = parse_cliente(l)
+            if c['cpf'] == cpf:
+                achou = True 
+                print("Dados atuais do cliente: ")
+                for key, value in c.items():
+                    print(f"{key.capitalize()}: {value}")
+
+
+                # Pegar as novas informações do cliente
+                c['nome'] = input("Novo Nome: ").strip() or c['nome']
+                c['endereco'] = input("Novo Endereço: ").strip() or c['endereco']
+                c['tel_fixo'] = input("Novo Telefone fixo: ").strip() or c['tel_fixo']
+                c['tel_cel'] = input("Novo Telefone celular: ").strip() or c['tel_cel']
+                data_nasc_input = input("Nova Data de nascimento (YYYY-MM-DD): ").strip()
+                if data_nasc_input:
+                    c['data_nasc'] = datetime.strptime(data_nasc_input, '%Y-%m-%d').date()
+
+                nova_lista.append(format_cliente(c))
+            else:
+                # Se não for o cliente a ser alterado, mantém a linha original
+                nova_lista.append(l)
+
+            
+            if not achou:
+                print("Cliente não encontrado.")
+                return
+            else:
+                gravar_arquivo('clientes.txt', nova_lista)
+                print("Cliente alterado.")
+        
+    except Exception as e:
+        print(f"Erro ao alterar cliente: {e}")
+        return
+
+    
 
 def excluir_cliente():
-    return
+    # Mesma verificação de arquivo e leitura
+    cpf = input("CPF do cliente a excluir: ").strip()
+    linhas = ler_arquivo('clientes.txt')
+    nova = []
+    achou = False
+    for l in linhas:
+        c = parse_cliente(l)
+        if c['cpf'] == cpf:
+            achou = True
+
+            print("Vai excluir:")
+            for key, value in c.items():
+                print(f"{key.capitalize()}: {value}")
+
+
+            # Confirmação de exclusão
+            confirmacao = input("Tem certeza que deseja excluir este cliente? (S/N): ").strip().upper()
+            if confirmacao == 'S':
+                print("Excluído.")
+                continue
+        # Se não for o cliente a ser excluído, mantém a linha original
+        # Se for o cliente a ser excluído, não adiciona na nova lista
+        nova.append(l)
+    if not achou:
+        print("Cliente não encontrado.")
+    else:
+        gravar_arquivo('clientes.txt', nova)
+
 
 def submenu_clientes():
   while True:
@@ -131,11 +217,14 @@ def submenu_clientes():
                 cliente = buscar_cliente(cpf)
                 if cliente:
                     print(f"\n✅ Cliente encontrado:")
-                    print(cliente)
+                    for key, value in cliente.items():
+                        print(f"{key.capitalize()}: {value}")
                 else:
                     print("\n❌ Cliente não encontrado.")
             else:
                 print("\n⚠️  CPF não pode estar vazio.")
+
+            #Input para continuar, mantendo a informação na tela como foco
             input("\nPressione ENTER para continuar...")
             
         elif opcao == '3':
@@ -168,6 +257,11 @@ com ; entre os campos e data no formato (AAAA-MM-DD)
 pra n dar BO
 
 '''
+
+
+
+
+
 # =============== Reservas =========================
 
 
@@ -212,6 +306,11 @@ def submenu_reservas():
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
             input("Pressione ENTER para continuar...")
+
+
+
+
+
 # =============== Apartamentos =========================
 
 def submenu_apartamentos():
@@ -258,6 +357,10 @@ def submenu_apartamentos():
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
             input("Pressione ENTER para continuar...")
+
+
+
+
 # =============== ReservaApart =========================
 
 def submenu_reserva_apto():
