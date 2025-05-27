@@ -430,8 +430,21 @@ def submenu_apartamentos():
          
             
         elif opcao == '2':
-            a = buscar_apartamento(input("Código: ").strip())
-            print(a if a else "Não encontrado.")
+
+            codigo = input("\n📋 Digite o código do apartamento: ").strip()
+            if codigo:
+                apartamento = buscar_apartamento(codigo)
+                if apartamento:
+                    print(f"\n✅ Apartamento encontrado:")
+                    for key, value in apartamento.items():
+                        print(f"{key.capitalize()}: {value}")
+                else:
+                    print("\n❌ Apartamento não encontrado.")
+            else:
+                print("\n⚠️  Código não pode estar vazio.")
+
+            #Input para continuar, mantendo a informação na tela como foco
+            input("\nPressione ENTER para continuar...")
        
            
             
