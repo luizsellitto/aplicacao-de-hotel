@@ -172,20 +172,179 @@ pra n dar BO
 
 
 def submenu_reservas():
-    return
+    while True:
+        print("\n" + "─"*40)
+        print("         GERENCIAMENTO DE RESERVAS")
+        print("─"*40)
+        print("│  1 │ Listar Todas as Reservas")
+        print("│  2 │ Buscar Reserva por Código")
+        print("│  3 │ Cadastrar Nova Reserva")
+        print("│  4 │ Alterar Dados da Reserva")
+        print("│  5 │ Excluir Reserva")
+        print("│  0 │ Voltar ao Menu Principal")
+        print("─"*40)
+        
+        opcao = input("Digite sua opção [0-5]: ").strip()
+        
+        if opcao == '1':
+            return
+            
+        elif opcao == '2':
+            return
+         
+            
+        elif opcao == '3':
+            return
+       
+            
+        elif opcao == '4':
+            return
+        
+            
+        elif opcao == '5':
+            return
+         
+            
+        elif opcao == '0':
+            print("\n🔙 Voltando ao menu principal...")
+            break
+            
+        else:
+            print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
+            input("Pressione ENTER para continuar...")
 # =============== Apartamentos =========================
 
 def submenu_apartamentos():
-    return
+    """Submenu para gerenciamento de apartamentos."""
+    while True:
+        print("\n" + "─"*40)
+        print("        GERENCIAMENTO DE APARTAMENTOS")
+        print("─"*40)
+        print("│  1 │ Listar Todos os Apartamentos")
+        print("│  2 │ Buscar Apartamento por Código")
+        print("│  3 │ Cadastrar Novo Apartamento")
+        print("│  4 │ Alterar Dados do Apartamento")
+        print("│  5 │ Excluir Apartamento")
+        print("│  0 │ Voltar ao Menu Principal")
+        print("─"*40)
+        
+        opcao = input("Digite sua opção [0-5]: ").strip()
+        
+        if opcao == '1':
+            return
+         
+            
+        elif opcao == '2':
+            return
+       
+           
+            
+        elif opcao == '3':
+            return
+    
+            
+        elif opcao == '4':
+            return
+        
+            
+        elif opcao == '5':
+            return
+       
+            
+        elif opcao == '0':
+            print("\n🔙 Voltando ao menu principal...")
+            break
+            
+        else:
+            print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
+            input("Pressione ENTER para continuar...")
 # =============== ReservaApart =========================
 
 def submenu_reserva_apto():
-    return
+    """Submenu para gerenciamento de vinculação reserva-apartamento."""
+    while True:
+        print("\n" + "─"*45)
+        print("       VINCULAÇÃO RESERVA-APARTAMENTO")
+        print("─"*45)
+        print("│  1 │ Listar Todas as Vinculações")
+        print("│  2 │ Buscar Vinculação Específica")
+        print("│  3 │ Criar Nova Vinculação")
+        print("│  4 │ Alterar Vinculação")
+        print("│  5 │ Excluir Vinculação")
+        print("│  0 │ Voltar ao Menu Principal")
+        print("─"*45)
+        
+        opcao = input("Digite sua opção [0-5]: ").strip()
+        
+        if opcao == '1':
+            return
+          
+            
+        elif opcao == '2':
+            return
+           
+            
+        elif opcao == '3':
+            return
+           
+            
+        elif opcao == '4':
+            return
+           
+            
+        elif opcao == '5':
+            return
+           
+            
+        elif opcao == '0':
+            print("\n🔙 Voltando ao menu principal...")
+            break
+            
+        else:
+            print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
+            input("Pressione ENTER para continuar...")
+
+
+
 # =============== Relatórios =========================
 
 
 def submenu_relatorios():
-    return
+    """Submenu para relatórios e consultas do sistema."""
+    while True:
+        print("\n" + "─"*45)
+        print("           RELATÓRIOS E CONSULTAS")
+        print("─"*45)
+        print("│  1 │ Reservas por Apartamento")
+        print("│  2 │ Reservas por Cliente")
+        print("│  3 │ Clientes por Período de Reserva")
+        print("│  0 │ Voltar ao Menu Principal")
+        print("─"*45)
+        
+        opcao = input("Digite sua opção [0-3]: ").strip()
+        
+        if opcao == '1':
+            print("\n📊 Gerando relatório de reservas por apartamento...")
+            return
+      
+            
+        elif opcao == '2':
+            print("\n📊 Gerando relatório de reservas por cliente...")
+            return
+    
+            
+        elif opcao == '3':
+            print("\n📊 Gerando relatório de clientes por período...")
+            return
+          
+            
+        elif opcao == '0':
+            print("\n🔙 Voltando ao menu principal...")
+            break
+            
+        else:
+            print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 3.")
+            input("Pressione ENTER para continuar...")
 
 # =============== Menu Principal =========================
 def main():
