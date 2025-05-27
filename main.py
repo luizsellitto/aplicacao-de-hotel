@@ -1,5 +1,6 @@
 
 import os
+from datetime import datetime
 # =============== Helpers =========================
 
 def ler_arquivo(nome_arquivo):
@@ -33,21 +34,71 @@ def gravar_arquivo(nome_arquivo, linhas):
 # =============== Clientes =========================
 
 def parse_cliente(linha):
-    # Formata em dicionario
-    return
+    try:
+        # Formata em dicionario
+        # CPF;Nome;Endereço;TelefoneFixo;TelefoneCelular;DataNascimento
+        cpf, nome, endereco, tel_fixo, tel_cel, data_nasc = linha.split(';')
+
+        return {
+            'cpf': cpf,
+            'nome': nome,
+            'endereco': endereco,
+            'tel_fixo': tel_fixo,
+            'tel_cel': tel_cel,
+            'data_nasc': datetime.strptime(data_nasc, '%Y-%m-%d').date()
+        }
+    except:
+        print(f"Erro ao parsear cliente: {linha}")
 
 def format_cliente(c):
     # Converte dicionário para string
     return f"{c['cpf']};{c['nome']};{c['endereco']};{c['tel_fixo']};{c['tel_cel']};{c['data_nasc'].isoformat()}"
 
 def listar_clientes():
-    return
+    try:
+        linhas = ler_arquivo('clientes.txt')
+        clientes = []
+        for linha in linhas:
+            cliente = parse_cliente(linha)
+            clientes.append(cliente)
+        
+        if not clientes:
+            print("Não há clientes cadastrados.")
+        else:
+            for c in clientes:
+                print(c)
+
+    except Exception as e:
+        print(f"Erro ao listar clientes: {e}")
 
 def buscar_cliente(cpf):
     return
 
 def incluir_cliente():
-    return
+
+    # Pegar as informações do cliente
+    cpf = input("CPF: ").strip()
+    if buscar_cliente(cpf):
+        print("Cliente já existe com esse CPF.")
+        return
+    nome = input("Nome: ").strip()
+    endereco = input("Endereço: ").strip()
+    tel_fixo = input("Telefone fixo: ").strip()
+    tel_cel = input("Telefone celular: ").strip()
+    data_nasc = datetime.strptime(input("Data de nascimento (YYYY-MM-DD): "), '%Y-%m-%d').date()
+
+    c = {
+        'cpf': cpf, 'nome': nome, 'endereco': endereco,
+        'tel_fixo': tel_fixo, 'tel_cel': tel_cel, 'data_nasc': data_nasc
+    }
+
+    # Verificar se o arquivo existe e gravar o cliente, ele será adicionado ao final do arquivo
+    # A função ler arquivo já verifica se o arquivo existe e retorna uma lista vazia se não existir
+    linhas = ler_arquivo('clientes.txt')
+    linhas.append(format_cliente(c))
+    gravar_arquivo('clientes.txt', linhas)
+    print("Cliente incluído.")
+
 
 def alterar_cliente():
 
@@ -57,25 +108,52 @@ def excluir_cliente():
     return
 
 def submenu_clientes():
-    while True:
-        print("\n-- Submenu Clientes --")
-        print("1 Listar todos")
-        print("2 Listar um")
-        print("3 Incluir")
-        print("4 Alterar")
-        print("5 Excluir")
-        print("0 Voltar")
-        op = input("Escolha: ")
-        if op == '1': listar_clientes()
-        elif op == '2':
-            cpf = input("CPF: ").strip()
-            c = buscar_cliente(cpf)
-            print(c or "Não encontrado.")
-        elif op == '3': incluir_cliente()
-        elif op == '4': alterar_cliente()
-        elif op == '5': excluir_cliente()
-        elif op == '0': break
-        else: print("Opção inválida.")
+  while True:
+        print("\n" + "─"*40)
+        print("         GERENCIAMENTO DE CLIENTES")
+        print("─"*40)
+        print("│  1 │ Listar Todos os Clientes")
+        print("│  2 │ Buscar Cliente por CPF")
+        print("│  3 │ Cadastrar Novo Cliente")
+        print("│  4 │ Alterar Dados do Cliente")
+        print("│  5 │ Excluir Cliente")
+        print("│  0 │ Voltar ao Menu Principal")
+        print("─"*40)
+        
+        opcao = input("Digite sua opção [0-5]: ").strip()
+        
+        if opcao == '1':
+            listar_clientes()
+            
+        elif opcao == '2':
+            cpf = input("\n📋 Digite o CPF do cliente: ").strip()
+            if cpf:
+                cliente = buscar_cliente(cpf)
+                if cliente:
+                    print(f"\n✅ Cliente encontrado:")
+                    print(cliente)
+                else:
+                    print("\n❌ Cliente não encontrado.")
+            else:
+                print("\n⚠️  CPF não pode estar vazio.")
+            input("\nPressione ENTER para continuar...")
+            
+        elif opcao == '3':
+            incluir_cliente()
+            
+        elif opcao == '4':
+            alterar_cliente()
+            
+        elif opcao == '5':
+            excluir_cliente()
+            
+        elif opcao == '0':
+            print("\n🔙 Voltando ao menu principal...")
+            break
+            
+        else:
+            print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
+            input("Pressione ENTER para continuar...")
 
 
 
