@@ -9,10 +9,12 @@ from datetime import datetime
 # =============== Helpers =========================
 
 def ler_arquivo(nome_arquivo):
+    # Verifica se o arquivo existe
     if not os.path.exists(nome_arquivo):
         return []
     
     try:
+        #Tenta abrir o arquivo e ler as linhas, r de read
         with open(nome_arquivo, 'r', encoding='utf-8') as arquivo:
             linhas = []
             for linha in arquivo:
@@ -57,7 +59,8 @@ def parse_cliente(linha):
 
 def format_cliente(c):
     # Converte dicionário para string
-    return f"{c['cpf']};{c['nome']};{c['endereco']};{c['tel_fixo']};{c['tel_cel']};{c['data_nasc'].isoformat()}"
+    return f"{c['cpf']};{c['nome']};{c['endereco']};{c['tel_fixo']};{c['tel_cel']};{c['data_nasc'].isoformat()}" 
+    # isoformat() converte a data para o formato YYYY-MM-DD
 
 def listar_clientes():
     try:
@@ -248,23 +251,8 @@ def submenu_clientes():
 
 
 
-'''MANTER FORMATAÇÂO DOS DADOS COMO NO EXEMPLO ABAIXO
-
-f"{c['cpf']};{c['nome']};{c['endereco']};{c['tel_fixo']};{c['tel_cel']};{c['data_nasc'].isoformat()}"
-
-com ; entre os campos e data no formato (AAAA-MM-DD)
-
-pra n dar BO
-
-'''
-
-
-
-
 
 # =============== Reservas =========================
-
-
 def submenu_reservas():
     while True:
         print("\n" + "─"*40)
@@ -311,8 +299,17 @@ def submenu_reservas():
 
 
 
-# =============== Apartamentos =========================
 
+
+
+
+
+
+
+
+
+
+# =============== Apartamentos =========================
 def submenu_apartamentos():
     """Submenu para gerenciamento de apartamentos."""
     while True:
@@ -361,8 +358,18 @@ def submenu_apartamentos():
 
 
 
-# =============== ReservaApart =========================
 
+
+
+
+
+
+
+
+
+
+
+# =============== ReservaApart =========================
 def submenu_reserva_apto():
     """Submenu para gerenciamento de vinculação reserva-apartamento."""
     while True:
@@ -409,9 +416,17 @@ def submenu_reserva_apto():
 
 
 
+
+
+
+
+
+
+
+
+
+
 # =============== Relatórios =========================
-
-
 def submenu_relatorios():
     """Submenu para relatórios e consultas do sistema."""
     while True:
@@ -448,6 +463,14 @@ def submenu_relatorios():
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 3.")
             input("Pressione ENTER para continuar...")
+
+
+
+
+
+
+
+
 
 # =============== Menu Principal =========================
 def main():
