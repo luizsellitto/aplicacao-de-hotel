@@ -84,8 +84,8 @@ def listar_clientes():
 def buscar_cliente(cpf):
     try:
         # Verifica se o arquivo existe e lê as linhas e procura o cliente pelo CPF
-        for l in ler_arquivo('clientes.txt'):
-            c = parse_cliente(l)
+        for linha in ler_arquivo('clientes.txt'):
+            c = parse_cliente(linha)
             if c['cpf'] == cpf:
                 return c
         return  # Retorna se não encontrar o cliente, não precisa de mensagem
@@ -113,7 +113,7 @@ def incluir_cliente():
     }
 
     # Verificar se o arquivo existe e gravar o cliente, ele será adicionado ao final do arquivo
-    # A função ler arquivo já verifica se o arquivo existe e retorna uma lista vazia se não existir
+    # Adultos função ler arquivo já verifica se o arquivo existe e retorna uma lista vazia se não existir
     linhas = ler_arquivo('clientes.txt')
     linhas.append(format_cliente(c))
     gravar_arquivo('clientes.txt', linhas)
@@ -127,10 +127,10 @@ def alterar_cliente():
         nova_lista = []
         achou = False
 
-        for l in linhas:
+        for linha in linhas:
 
             # Não consegui reutilizar a função buscar_cliente, pois ela retorna o cliente e não a linha
-            c = parse_cliente(l)
+            c = parse_cliente(linha)
             if c['cpf'] == cpf:
                 achou = True 
                 print("Dados atuais do cliente: ")
@@ -150,7 +150,7 @@ def alterar_cliente():
                 nova_lista.append(format_cliente(c))
             else:
                 # Se não for o cliente a ser alterado, mantém a linha original
-                nova_lista.append(l)
+                nova_lista.append(linha)
 
             
             if not achou:
@@ -172,8 +172,8 @@ def excluir_cliente():
     linhas = ler_arquivo('clientes.txt')
     nova = []
     achou = False
-    for l in linhas:
-        c = parse_cliente(l)
+    for linha in linhas:
+        c = parse_cliente(linha)
         if c['cpf'] == cpf:
             achou = True
 
@@ -189,7 +189,7 @@ def excluir_cliente():
                 continue
         # Se não for o cliente a ser excluído, mantém a linha original
         # Se for o cliente a ser excluído, não adiciona na nova lista
-        nova.append(l)
+        nova.append(linha)
     if not achou:
         print("Cliente não encontrado.")
     else:
@@ -310,6 +310,105 @@ def submenu_reservas():
 
 
 # =============== Apartamentos =========================
+
+def parse_apartamento(linha):
+    try:
+        codigo, descricao, adulto, crianca, valor = linha.split(';')
+        return {
+            'codigo': codigo,
+            'descricao': descricao,
+            'adultos': int(adulto),
+            'criancas': int(crianca),
+            'valor': float(valor)
+        }
+    except:
+        print(f"Erro ao parsear apartamento: {linha}")
+
+def format_apartamento(a):
+    return f"{a['codigo']};{a['descricao']};{a['adultos']};{a['criancas']};{a['valor']}"
+
+def listar_apartamentos():
+    linhas = ler_arquivo('apartamentos.txt')
+    apartamentos = []
+    for linha in linhas:
+        apartamento = parse_apartamento(linha)
+        apartamentos.append(apartamento)
+
+
+    if not apartamentos:
+        print("Sem apartamentos.")
+    else:
+        for a in apartamentos:
+            print(f"Código: {a['codigo']}, Descrição: {a['descricao']}, Adultos: {a['adultos']}, Crianças: {a['criancas']}, Valor: {a['valor']}")
+
+def buscar_apartamento(codigo):
+    linhas = ler_arquivo('apartamentos.txt')
+    for linha in linhas:
+        a = parse_apartamento(linha)
+        if a['codigo'] == codigo:
+            return a
+    return None
+
+def incluir_apartamento():
+    codigo = input("Código do apto: ").strip()
+    if buscar_apartamento(codigo):
+        print("Já existe.")
+        return
+    descricao = input("Descrição: ").strip()
+    adulto = int(input("Adultos: ").strip())
+    crianca = int(input("Crianças: ").strip())
+    valor = float(input("Valor: ").strip())
+    a = {'codigo': codigo, 'descricao': descricao, 'adultos': adulto, 'criancas': crianca, 'valor': valor}
+    linhas = ler_arquivo('apartamentos.txt')
+    linhas.append(format_apartamento(a))
+    gravar_arquivo('apartamentos.txt', linhas)
+    print("Incluído.")
+
+def alterar_apartamento():
+    codigo = input("Código a alterar: ").strip()
+    linhas = ler_arquivo('apartamentos.txt')
+    nova = []
+    achou = False
+    for linha in linhas:
+        a = parse_apartamento(linha)
+        if a['codigo'] == codigo:
+            achou = True
+            print("Atual:", a)
+            a['descricao'] = input("Nova descricao: ").strip() or a['descricao']
+            a['adultos'] = int(input("Novos adultos: ").strip() or a['adultos'])
+            a['criancas'] = int(input("Novas crianças: ").strip() or a['criancas'])
+            nv = input("Novo valor: ").strip()
+            if nv: # Se o usuário não digitar nada, mantém o valor atual
+                a['valor'] = float(nv)
+            nova.append(format_apartamento(a))
+        else:
+            nova.append(linha)
+    if not achou:
+        print("Não encontrado.")
+    else:
+        gravar_arquivo('apartamentos.txt', nova)
+        print("Alterado.")
+
+def excluir_apartamento():
+    codigo = input("Código a excluir: ").strip()
+    linhas = ler_arquivo('apartamentos.txt')
+    nova = []
+    achou = False
+    for linha in linhas:
+        a = parse_apartamento(linha)
+        if a['codigo'] == codigo:
+            achou = True
+            print("Excluindo:", a)
+            if input("Confirmar? (S/N): ").strip().upper() != 'S':
+                nova.append(linha)
+        else:
+            nova.append(linha)
+    if not achou:
+        print("Não encontrado.")
+    else:
+        gravar_arquivo('apartamentos.txt', nova)
+        print("Apartamento excluído com sucesso.")
+
 def submenu_apartamentos():
     """Submenu para gerenciamento de apartamentos."""
     while True:
@@ -327,24 +426,25 @@ def submenu_apartamentos():
         opcao = input("Digite sua opção [0-5]: ").strip()
         
         if opcao == '1':
-            return
+            listar_apartamentos()
          
             
         elif opcao == '2':
-            return
+            a = buscar_apartamento(input("Código: ").strip())
+            print(a if a else "Não encontrado.")
        
            
             
         elif opcao == '3':
-            return
+            incluir_apartamento()
     
             
         elif opcao == '4':
-            return
+            alterar_apartamento()
         
             
         elif opcao == '5':
-            return
+            excluir_apartamento()
        
             
         elif opcao == '0':

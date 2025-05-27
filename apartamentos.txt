@@ -1,0 +1,2 @@
+01;Apartamento Legal;2;1;250.0
+03;Apartamento 3;3;1;350.0
