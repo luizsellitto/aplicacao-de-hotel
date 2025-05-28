@@ -249,10 +249,97 @@ def submenu_clientes():
 
 
 
-
-
-
 # =============== Reservas =========================
+
+def parse_reserva(linha):
+    codigo, cpf = linha.split(';')
+    return {'codigo': codigo, 'cpf': cpf}
+
+def format_reserva(r):
+    return f"{r['codigo']};{r['cpf']}"
+
+
+def listar_reservas():
+    linhas = ler_arquivo('reservas.txt')
+    reservas = []
+    for linha in linhas:
+        reservas.append(parse_reserva(linha))
+    if not reservas:
+        print("Sem reservas.")
+    else:
+        for r in reservas:
+            print(f"Código: {r['codigo']}, CPF do Cliente: {r['cpf']}")
+
+def buscar_reserva(codigo):
+    for linha in ler_arquivo('reservas.txt'):
+        r = parse_reserva(linha)
+        if r['codigo'] == codigo:
+            return r
+    return None
+
+def incluir_reserva():
+    codigo = input("Código da reserva: ").strip()
+    if buscar_reserva(codigo):
+        print("Já existe uma reserva com esse código.")
+        return
+    cpf = input("CPF do cliente: ").strip()
+    if not buscar_cliente(cpf):
+        print("Cliente não encontrado.")
+        return
+    r = {'codigo': codigo, 'cpf': cpf}
+    linhas = ler_arquivo('reservas.txt')
+    linhas.append(format_reserva(r))
+    gravar_arquivo('reservas.txt', linhas)
+    print("Reserva incluída com sucesso.")
+
+
+def alterar_reserva():
+    codigo = input("Código da reserva a alterar: ").strip()
+    linhas = ler_arquivo('reservas.txt')
+    nova = []
+    achou = False
+    for linha in linhas:
+        r = parse_reserva(linha)
+        if r['codigo'] == codigo:
+            achou = True
+            print("Dados atuais da reserva:")
+            for key, value in r.items():
+                print(f"{key.capitalize()}: {value}")
+            r['cpf'] = input("Novo CPF do cliente: ").strip() or r['cpf']
+            if not buscar_cliente(r['cpf']):
+                print("Cliente não encontrado.")
+                return
+            nova.append(format_reserva(r))
+        else:
+            nova.append(linha)
+    if not achou:
+        print("Reserva não encontrada.")
+    else:
+        gravar_arquivo('reservas.txt', nova)
+        print("Reserva alterada com sucesso.")
+
+def excluir_reserva():
+    codigo = input("Código da reserva a excluir: ").strip()
+    linhas = ler_arquivo('reservas.txt')
+    nova = []
+    achou = False
+    for linha in linhas:
+        r = parse_reserva(linha)
+        if r['codigo'] == codigo:
+            achou = True
+            print("Excluindo reserva:")
+            for key, value in r.items():
+                print(f"{key.capitalize()}: {value}")
+            confirmacao = input("Confirmar exclusão? (S/N): ").strip().upper()
+            if confirmacao == 'S':
+                print("Reserva excluída com sucesso.")
+                continue
+        nova.append(linha)
+    if not achou:
+        print("Reserva não encontrada.")
+    else:
+        gravar_arquivo('reservas.txt', nova)
+
 def submenu_reservas():
     while True:
         print("\n" + "─"*40)
@@ -269,42 +356,35 @@ def submenu_reservas():
         opcao = input("Digite sua opção [0-5]: ").strip()
         
         if opcao == '1':
-            return
-            
+            listar_reservas()
         elif opcao == '2':
-            return
-         
+            codigo = input("\n📋 Digite o código da reserva: ").strip()
+            if codigo:
+                reserva = buscar_reserva(codigo)
+                if reserva:
+                    print(f"\n✅ Reserva encontrada:")
+                    for key, value in reserva.items():
+                        print(f"{key.capitalize()}: {value}")
+                else:
+                    print("\n❌ Reserva não encontrada.")
+            else:
+                print("\n⚠️  Código não pode estar vazio.")
+
+            #Input para continuar, mantendo a informação na tela como foco
+            input("\nPressione ENTER para continuar...")
             
         elif opcao == '3':
-            return
-       
-            
+            incluir_reserva()     
         elif opcao == '4':
-            return
-        
-            
+            alterar_reserva()    
         elif opcao == '5':
-            return
-         
-            
+            excluir_reserva()     
         elif opcao == '0':
             print("\n🔙 Voltando ao menu principal...")
-            break
-            
+            break     
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
             input("Pressione ENTER para continuar...")
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -410,7 +490,6 @@ def excluir_apartamento():
         print("Apartamento excluído com sucesso.")
 
 def submenu_apartamentos():
-    """Submenu para gerenciamento de apartamentos."""
     while True:
         print("\n" + "─"*40)
         print("        GERENCIAMENTO DE APARTAMENTOS")
@@ -484,7 +563,6 @@ def submenu_apartamentos():
 
 # =============== ReservaApart =========================
 def submenu_reserva_apto():
-    """Submenu para gerenciamento de vinculação reserva-apartamento."""
     while True:
         print("\n" + "─"*45)
         print("       VINCULAÇÃO RESERVA-APARTAMENTO")
@@ -541,7 +619,6 @@ def submenu_reserva_apto():
 
 # =============== Relatórios =========================
 def submenu_relatorios():
-    """Submenu para relatórios e consultas do sistema."""
     while True:
         print("\n" + "─"*45)
         print("           RELATÓRIOS E CONSULTAS")
