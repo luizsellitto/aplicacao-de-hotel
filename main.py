@@ -578,26 +578,26 @@ def verifica_conflito_reserva(cod_apa, nova_entrada, nova_saida, cod_res=None): 
             if cod_res and ra['cod_res'] == cod_res: # se for alteração, ignora a reserva atual
                 continue
             # Verifica sobreposição de períodos
-            if (nova_saida >= ra['dataEntrada'] and nova_entrada <= ra['dataSaida']):
-                print(f"❌ Conflito com reserva existente: Apartamento {ra['cod_res']} já tem reserva para o período de {ra['dataEntrada']} a {ra['dataSaida']}")
+            if (nova_saida >= ra['data_entrada'] and nova_entrada <= ra['data_saida']):
+                print(f"❌ Conflito com reserva existente: Apartamento {ra['cod_res']} já tem reserva para o período de {ra['data_entrada']} a {ra['data_saida']}")
                 return True
     return False
 
 
 def parse_reserva_apto(linha):
     try:
-        cod_res, cod_apa, dataEntrada, dataSaida = linha.split(';')
+        cod_res, cod_apa, data_entrada, data_saida = linha.split(';')
         return {
             'cod_res': cod_res,
             'cod_apa': cod_apa,
-            'dataEntrada': datetime.strptime(dataEntrada, '%Y-%m-%d').date(),
-            'dataSaida': datetime.strptime(dataSaida, '%Y-%m-%d').date()
+            'data_entrada': datetime.strptime(data_entrada, '%Y-%m-%d').date(),
+            'data_saida': datetime.strptime(data_saida, '%Y-%m-%d').date()
         }
     except:
         print(f"Erro ao parsear vinculação: {linha}")
 
 def format_reserva_apto(r):
-    return f"{r['cod_res']};{r['cod_apa']};{r['dataEntrada'].isoformat()};{r['dataSaida'].isoformat()}"
+    return f"{r['cod_res']};{r['cod_apa']};{r['data_entrada'].isoformat()};{r['data_saida'].isoformat()}"
 
 def listar_reservas_apto():
     reserva_aptos = []
@@ -609,7 +609,7 @@ def listar_reservas_apto():
         print("Sem reservas de apartamento.")
     else:
         for ra in reserva_aptos:
-            print(f"Reserva: {ra['cod_res']}, Apartamento: {ra['cod_apa']}, Entrada: {ra['dataEntrada'].strftime('%d/%m/%Y %H:%M:%S')}, Saída: {ra['dataSaida'].strftime('%d/%m/%Y %H:%M:%S')}")
+            print(f"Reserva: {ra['cod_res']}, Apartamento: {ra['cod_apa']}, Entrada: {ra['data_entrada'].strftime('%d/%m/%Y %H:%M:%S')}, Saída: {ra['data_saida'].strftime('%d/%m/%Y %H:%M:%S')}")
 
 def buscar_reserva_apto(cod_res, cod_apa):
     reservas_apto = ler_arquivo('reserva_apartamentos.txt')
@@ -627,20 +627,20 @@ def incluir_reserva_apto():
         print("❌ Já existe uma reserva com esse código e apartamento.")
         return
 
-    dataEntrada = datetime.strptime(input("Entrada (YYYY-MM-DD): ").strip(), '%Y-%m-%d').date()
-    dataSaida = datetime.strptime(input("Saída (YYYY-MM-DD): ").strip(), '%Y-%m-%d').date()
+    data_entrada = datetime.strptime(input("Entrada (YYYY-MM-DD): ").strip(), '%Y-%m-%d').date()
+    data_saida = datetime.strptime(input("Saída (YYYY-MM-DD): ").strip(), '%Y-%m-%d').date()
 
     # Verifica se entrada é antes da saída
-    if dataEntrada >= dataSaida:
+    if data_entrada >= data_saida:
         print("❌ Data de entrada deve ser anterior à data de saída.")
         return
 
     # Verifica conflitos
-    if verifica_conflito_reserva(cod_apa, dataEntrada, dataSaida):
+    if verifica_conflito_reserva(cod_apa, data_entrada, data_saida):
         print("❌ Não é possível realizar a reserva devido a conflito de datas.")
         return
 
-    ra = {'cod_res': cod_res, 'cod_apa': cod_apa, 'dataEntrada': dataEntrada, 'dataSaida': dataSaida}
+    ra = {'cod_res': cod_res, 'cod_apa': cod_apa, 'data_entrada': data_entrada, 'data_saida': data_saida}
     linhas = ler_arquivo('reserva_apartamentos.txt')
     linhas.append(format_reserva_apto(ra))
     gravar_arquivo('reserva_apartamentos.txt', linhas)
@@ -659,21 +659,21 @@ def alterar_reserva_apto():
         if ra['cod_res'] == cod_res and ra['cod_apa'] == cod_apa:
             achou = True
             print("Atual:", ra)
-            dataEntrada = input("Nova entrada (YYYY-MM-DD): ").strip()
-            dataSaida = input("Nova saída (YYYY-MM-DD): ").strip()
+            data_entrada = input("Nova entrada (YYYY-MM-DD): ").strip()
+            data_saida = input("Nova saída (YYYY-MM-DD): ").strip()
 
-            if dataEntrada:
-                ra['dataEntrada'] = datetime.strptime(dataEntrada, '%Y-%m-%d').date()
-            if dataSaida:
-                ra['dataSaida'] = datetime.strptime(dataSaida, '%Y-%m-%d').date()
+            if data_entrada:
+                ra['data_entrada'] = datetime.strptime(data_entrada, '%Y-%m-%d').date()
+            if data_saida:
+                ra['data_saida'] = datetime.strptime(data_saida, '%Y-%m-%d').date()
 
             # Verifica se entrada é antes da saída
-            if ra['dataEntrada'] >= ra['dataSaida']:
+            if ra['data_entrada'] >= ra['data_saida']:
                 print("❌ Data de entrada deve ser anterior à data de saída.")
                 return
 
             # Verifica conflitos (ignorando a reserva atual)
-            if verifica_conflito_reserva(cod_apa, ra['dataEntrada'], ra['dataSaida'], cod_res):
+            if verifica_conflito_reserva(cod_apa, ra['data_entrada'], ra['data_saida'], cod_res):
                 print("❌ Não é possível alterar a reserva devido a conflito de datas.")
                 return
 
@@ -715,7 +715,7 @@ def submenu_reserva_apto():
         print("─"*45)
         print("│  1 │ Listar Todas as Reservas de Apartamento")
         print("│  2 │ Buscar Reserva de Apartamento Específica")
-        print("│  3 │ Criar Nova REserva de Apartamento")
+        print("│  3 │ Criar Nova Reserva de Apartamento")
         print("│  4 │ Alterar Reserva de Apartamento")
         print("│  5 │ Excluir Reserva de Apartamento")
         print("│  0 │ Voltar ao Menu Principal")
@@ -778,33 +778,222 @@ def submenu_reserva_apto():
 
 
 # =============== Relatórios =========================
+def relatorio_reservas_por_apartamento():
+    codigo = input("Código do apto: ").strip()
+    reservas_apartamento = ler_arquivo('reserva_apartamentos.txt')
+    relatorio = []
+    
+    for linha in reservas_apartamento:
+        ra = parse_reserva_apto(linha)
+        if ra['cod_apa'] == codigo:
+            relatorio.append(linha)
+    
+    if not relatorio:
+        print("Nenhuma reserva encontrada para o código informado.")
+        return
+    
+    nome = f"relatorio_reservas_apto_{codigo}.txt"
+    gravar_arquivo(nome, relatorio)
+    print(f"Gerado: {nome}")
+
+def imprimir_relatorio_reservas_apartamento():
+    codigo = input("Código do apartamento para leitura do relatório: ").strip()
+    nome = f"relatorio_reservas_apto_{codigo}.txt"
+
+    try:
+        relatorio = ler_arquivo(nome)
+        if not relatorio:
+            print("O relatório está vazio.")
+            return
+
+        print(f"\nRelatório de Reservas - Apartamento {codigo}")
+        print("=" * 50)
+
+        for linha in relatorio:
+            partes = linha.strip().split(';')
+
+            reserva = buscar_reserva(partes[0])  # busca a reserva pelo código
+            apartamento = buscar_apartamento(partes[1])  # busca o apartamento pelo código
+
+            print("Reserva:")
+            print(f"  Código da Reserva: {partes[0]}")
+            print(f"  CPF do cliente: {reserva['cpf']}")
+            print(f"  Apartamento: {partes[1]}")
+            print(f"  Data de Entrada: {partes[2]}")
+            print(f"  Data de Saída: {partes[3]}")
+            print(f"  Valor: {apartamento['valor']}")
+            print("-" * 30)
+
+    except Exception as e:
+        print(f"Ocorreu um erro inesperado: {e}")
+
+
+
+def relatorio_reservas_por_cliente():
+    cpf = input("CPF do cliente: ").strip()
+    reservas = ler_arquivo('reservas.txt')
+    reservas_cliente_cod = [] # Lista para armazenar os códigos das reservas do cliente
+    for linha in reservas:
+        reserva = parse_reserva(linha) # Pega o código e o CPF da reserva
+        if reserva['cpf'] == cpf:
+            reservas_cliente_cod.append(reserva['codigo'])
+
+    reservas_apartamento = ler_arquivo('reserva_apartamentos.txt')
+    relatorio = []
+    for linha in reservas_apartamento:
+        cod_reserva_apto = (linha.split(';'))[0] # Pega o código da reserva do apartamento
+        if cod_reserva_apto in reservas_cliente_cod:
+            relatorio.append(linha)
+
+    nome = f"relatorio_reservas_cliente_{cpf}.txt"
+
+    gravar_arquivo(nome, relatorio)
+    print(f"Gerado: {nome}")
+
+def imprimir_relatorio_reservas_cliente():
+    cpf = input("CPF do cliente para leitura do relatório: ").strip()
+    nome = f"relatorio_reservas_cliente_{cpf}.txt"
+
+    try:
+        relatorio = ler_arquivo(nome)
+        if not relatorio:
+            print("O relatório está vazio.")
+            return
+
+        print(f"\nRelatório de Reservas - Cliente {cpf}")
+        print("=" * 50)
+
+        for linha in relatorio:
+            partes = linha.strip().split(';')
+
+            reserva = buscar_reserva(partes[0])  # busca a reserva pelo código
+            apartamento = buscar_apartamento(partes[1])  # busca o apartamento pelo código
+
+            print("Reserva:")
+            print(f"  Código da Reserva: {partes[0]}")
+            print(f"  CPF do cliente: {reserva['cpf']}")
+            print(f"  Apartamento: {partes[1]}")
+            print(f"  Data de Entrada: {partes[2]}")
+            print(f"  Data de Saída: {partes[3]}")
+            print(f"  Valor: {apartamento['valor']}")
+            print("-" * 30)
+
+    except Exception as e:
+        print(f"Ocorreu um erro inesperado: {e}")
+
+def relatorio_reservas_por_periodo():
+    try:
+        data_inicio = datetime.strptime(input("Data inicial (YYYY-MM-DD): ").strip(), '%Y-%m-%d').date()
+        data_fim = datetime.strptime(input("Data final (YYYY-MM-DD): ").strip(), '%Y-%m-%d').date()
+
+        if data_fim < data_inicio:
+            print("Erro: a data final não pode ser anterior à data inicial.")
+            return
+
+        reservas_apartamento = ler_arquivo('reserva_apartamentos.txt')
+        encontrou = False
+        relatorio = []
+
+        for linha in reservas_apartamento:
+            reserva_apto = parse_reserva_apto(linha)
+
+            data_ent = reserva_apto['data_entrada']
+            data_sai = reserva_apto['data_saida']
+
+            if (data_inicio <= data_ent <= data_fim) or (data_inicio <= data_sai <= data_fim):
+                reserva = buscar_reserva(reserva_apto['cod_res'])
+                apartamento = buscar_apartamento(reserva_apto['cod_apa'])
+                cliente = buscar_cliente((reserva['cpf']))
+
+                if reserva is None or apartamento is None:
+                    continue
+                
+                relatorio.append(f"{reserva_apto['cod_res']};{cliente['nome']};{reserva['cpf']};{reserva_apto['cod_apa']};{reserva_apto['data_entrada'].isoformat()};{reserva_apto['data_saida'].isoformat()};{apartamento['valor']}")
+                encontrou = True
+
+        if not encontrou:
+            print("Nenhuma reserva encontrada no período informado.")
+
+        nome = f"relatorio_reservas_do_periodo_{data_inicio}_{data_fim}.txt"
+        gravar_arquivo(nome, relatorio)
+        print(f"Gerado: {nome}")
+
+    except Exception as e:
+        print(f"Ocorreu um erro inesperado: {e}")
+
+
+def imprimir_relatorio_por_periodo():
+    data_inicio = datetime.strptime(input("Data inicial (YYYY-MM-DD): ").strip(), '%Y-%m-%d').date()
+    data_fim = datetime.strptime(input("Data final (YYYY-MM-DD): ").strip(), '%Y-%m-%d').date()
+
+    if data_fim < data_inicio:
+        print("Erro: a data final não pode ser anterior à data inicial.")
+        return
+    nome = f"relatorio_reservas_do_periodo_{data_inicio}_{data_fim}.txt"
+
+    try:
+        relatorio = ler_arquivo(nome)
+        if not relatorio:
+            print("O relatório está vazio.")
+            return
+
+        print(f"\nRelatório por Período de {data_inicio} até {data_fim}")
+        print("=" * 50)
+        for linha in relatorio:
+            partes = linha.strip().split(';')
+            print("Reserva:")
+            print(f"  Código da Reserva: {partes[0]}")
+            print(f"  Nome do Cliente: {partes[1]}")
+            print(f"  CPF do cliente: {partes[2]}")
+            print(f"  Apartamento: {partes[3]}")
+            print(f"  Data de Entrada: {partes[4]}")
+            print(f"  Data de Saída: {partes[5]}")
+            print(f"  Valor: {partes[6]}")
+            print("-" * 30)
+            encontrou = True
+
+        if not encontrou:
+            print("Nenhuma reserva encontrada no período informado.")
+
+    except Exception as e:
+        print(f"Ocorreu um erro inesperado: {e}")
+
+
+
 def submenu_relatorios():
     while True:
         print("\n" + "─"*45)
         print("           RELATÓRIOS E CONSULTAS")
         print("─"*45)
-        print("│  1 │ Reservas por Apartamento")
-        print("│  2 │ Reservas por Cliente")
-        print("│  3 │ Clientes por Período de Reserva")
+        print("│  1 │ Criar Relatório de Reservas por Apartamento")
+        print("│  2 │ Criar Relatório de Reservas por Cliente")
+        print("│  3 │ Criar Relatório de REservas por Período de Reserva")
+        print("│  4 │ Imprimir Relatório de Reservas por Apartamento")
+        print("│  5 │ Imprimir Relatório de Reservas por Cliente")
+        print("│  6 │ Imprimir Relatório de Período de Reserva")
         print("│  0 │ Voltar ao Menu Principal")
         print("─"*45)
         
-        opcao = input("Digite sua opção [0-3]: ").strip()
+        opcao = input("Digite sua opção [0-6]: ").strip()
         
         if opcao == '1':
-            print("\n📊 Gerando relatório de reservas por apartamento...")
-            return
+            relatorio_reservas_por_apartamento()
       
             
         elif opcao == '2':
-            print("\n📊 Gerando relatório de reservas por cliente...")
-            return
+            relatorio_reservas_por_cliente()
     
-            
         elif opcao == '3':
-            print("\n📊 Gerando relatório de clientes por período...")
-            return
-          
+            relatorio_reservas_por_periodo()
+        
+        elif opcao == '4':
+            imprimir_relatorio_reservas_apartamento()
+
+        elif opcao == '5':
+            imprimir_relatorio_reservas_cliente()
+        
+        elif opcao == '6':
+            imprimir_relatorio_por_periodo()
             
         elif opcao == '0':
             print("\n🔙 Voltando ao menu principal...")
