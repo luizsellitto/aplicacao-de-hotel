@@ -1,8 +1,8 @@
 
 
-# Importa OS para manipulação dataEntrada arquivos
+# Importa OS para manipulação de arquivos
 import os
-# Importa datetime para manipulação mais precisa dataEntrada datas
+# Importa datetime para manipulação mais precisa de datas
 from datetime import datetime
 
 
@@ -14,7 +14,7 @@ def ler_arquivo(nome_arquivo):
         return []
     
     try:
-        #Tenta abrir o arquivo e ler as linhas, r dataEntrada read
+        #Tenta abrir o arquivo e ler as linhas, r de read
         with open(nome_arquivo, 'r', encoding='utf-8') as arquivo:
             linhas = []
             for linha in arquivo:
@@ -76,7 +76,7 @@ def listar_clientes():
             for c in clientes:
                 print(f"CPF: {c['cpf']}, Nome: {c['nome']}, Endereço: {c['endereco']}, "
                       f"Telefone Fixo: {c['tel_fixo']}, Telefone Celular: {c['tel_cel']}, "
-                      f"Data dataEntrada Nascimento: {c['data_nasc'].isoformat()}")
+                      f"Data de Nascimento: {c['data_nasc'].isoformat()}")
 
     except Exception as e:
         print(f"Erro ao listar clientes: {e}")
@@ -88,7 +88,7 @@ def buscar_cliente(cpf):
             c = parse_cliente(linha)
             if c['cpf'] == cpf:
                 return c
-        return  # Retorna se não encontrar o cliente, não precisa dataEntrada mensagem
+        return  # Retorna se não encontrar o cliente, não precisa de mensagem
                 # Usuário não precisa saber que aquele CPF não está cadastrado
     except Exception as e:
         print(f"Erro ao buscar cliente: {e}")
@@ -105,7 +105,7 @@ def incluir_cliente():
     endereco = input("Endereço: ").strip()
     tel_fixo = input("Telefone fixo: ").strip()
     tel_cel = input("Telefone celular: ").strip()
-    data_nasc = datetime.strptime(input("Data dataEntrada nascimento (YYYY-MM-DD): "), '%Y-%m-%d').date()
+    data_nasc = datetime.strptime(input("Data de nascimento (YYYY-MM-DD): "), '%Y-%m-%d').date()
 
     c = {
         'cpf': cpf, 'nome': nome, 'endereco': endereco,
@@ -143,7 +143,7 @@ def alterar_cliente():
                 c['endereco'] = input("Novo Endereço: ").strip() or c['endereco']
                 c['tel_fixo'] = input("Novo Telefone fixo: ").strip() or c['tel_fixo']
                 c['tel_cel'] = input("Novo Telefone celular: ").strip() or c['tel_cel']
-                data_nasc_input = input("Nova Data dataEntrada nascimento (YYYY-MM-DD): ").strip()
+                data_nasc_input = input("Nova Data de nascimento (YYYY-MM-DD): ").strip()
                 if data_nasc_input:
                     c['data_nasc'] = datetime.strptime(data_nasc_input, '%Y-%m-%d').date()
 
@@ -167,7 +167,7 @@ def alterar_cliente():
     
 
 def excluir_cliente():
-    # Mesma verificação dataEntrada arquivo e leitura
+    # Mesma verificação de arquivo e leitura
     cpf = input("CPF do cliente a excluir: ").strip()
     linhas = ler_arquivo('clientes.txt')
     nova = []
@@ -182,7 +182,7 @@ def excluir_cliente():
                 print(f"{key.capitalize()}: {value}")
 
 
-            # Confirmação dataEntrada exclusão
+            # Confirmação de exclusão
             confirmacao = input("Tem certeza que deseja excluir este cliente? (S/N): ").strip().upper()
             if confirmacao == 'S':
                 print("Excluído.")
@@ -785,24 +785,24 @@ def submenu_relatorios():
         print("─"*45)
         print("│  1 │ Reservas por Apartamento")
         print("│  2 │ Reservas por Cliente")
-        print("│  3 │ Clientes por Período dataEntrada Reserva")
+        print("│  3 │ Clientes por Período de Reserva")
         print("│  0 │ Voltar ao Menu Principal")
         print("─"*45)
         
         opcao = input("Digite sua opção [0-3]: ").strip()
         
         if opcao == '1':
-            print("\n📊 Gerando relatório dataEntrada reservas por apartamento...")
+            print("\n📊 Gerando relatório de reservas por apartamento...")
             return
       
             
         elif opcao == '2':
-            print("\n📊 Gerando relatório dataEntrada reservas por cliente...")
+            print("\n📊 Gerando relatório de reservas por cliente...")
             return
     
             
         elif opcao == '3':
-            print("\n📊 Gerando relatório dataEntrada clientes por período...")
+            print("\n📊 Gerando relatório de clientes por período...")
             return
           
             
