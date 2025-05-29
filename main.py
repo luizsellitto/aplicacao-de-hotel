@@ -410,89 +410,146 @@ def parse_apartamento(linha):
 def format_apartamento(a):
     return f"{a['codigo']};{a['descricao']};{a['adultos']};{a['criancas']};{a['valor']}"
 
-def listar_apartamentos():
-    linhas = ler_arquivo('apartamentos.txt')
-    apartamentos = []
-    for linha in linhas:
-        apartamento = parse_apartamento(linha)
-        apartamentos.append(apartamento)
-
-
+def listar_apartamentos(apartamentos):
     if not apartamentos:
         print("Sem apartamentos.")
     else:
         for a in apartamentos:
             print(f"Código: {a['codigo']}, Descrição: {a['descricao']}, Adultos: {a['adultos']}, Crianças: {a['criancas']}, Valor: {a['valor']}")
 
-def buscar_apartamento(codigo):
-    linhas = ler_arquivo('apartamentos.txt')
-    for linha in linhas:
-        a = parse_apartamento(linha)
+def buscar_apartamento(codigo, apartamentos):
+    for a in apartamentos:
         if a['codigo'] == codigo:
             return a
     return None
 
-def incluir_apartamento():
+def incluir_apartamento(apartamentos):
     codigo = input("Código do apartamento: ").strip()
-    if buscar_apartamento(codigo):
-        print("Já existe.")
+    if buscar_apartamento(codigo, apartamentos):
+        print("❌ Já existe um apartamento com este código.")
         return
     descricao = input("Descrição: ").strip()
-    adulto = int(input("Adultos: ").strip())
-    crianca = int(input("Crianças: ").strip())
-    valor = float(input("Valor: ").strip())
-    a = {'codigo': codigo, 'descricao': descricao, 'adultos': adulto, 'criancas': crianca, 'valor': valor}
-    linhas = ler_arquivo('apartamentos.txt')
-    linhas.append(format_apartamento(a))
-    gravar_arquivo('apartamentos.txt', linhas)
-    print("Incluído.")
 
-def alterar_apartamento():
+    while True:
+        try:
+            adulto = int(input("Adultos: ").strip())
+            if adulto < 0:
+                print("❌ O número de adultos não pode ser negativo.")
+                continue
+            break
+        except:
+            print("❌ Entrada inválida. Digite um número inteiro.")
+
+    while True:
+        try:
+            crianca = int(input("Crianças: ").strip())
+            if crianca < 0:
+                print("❌ O número de crianças não pode ser negativo.")
+                continue
+            break
+        except:
+            print("❌ Entrada inválida. Digite um número inteiro.")
+
+    while True:
+        try:
+            valor = float(input("Valor: ").strip())
+            if valor < 0:
+                print("❌ O valor não pode ser negativo.")
+                continue
+            break
+        except:
+            print("❌ Entrada inválida. Digite um número decimal.")
+
+    a = {'codigo': codigo, 'descricao': descricao, 'adultos': adulto, 'criancas': crianca, 'valor': valor}
+    apartamentos.append(a)
+    print("✅ Apartamento incluído com sucesso.")
+
+def alterar_apartamento(apartamentos):
     codigo = input("Código a alterar: ").strip()
-    linhas = ler_arquivo('apartamentos.txt')
-    nova = []
     achou = False
-    for linha in linhas:
-        a = parse_apartamento(linha)
+    for a in apartamentos:
         if a['codigo'] == codigo:
             achou = True
             print("Atual:", a)
-            a['descricao'] = input("Nova descricao: ").strip() or a['descricao']
-            a['adultos'] = int(input("Novos adultos: ").strip() or a['adultos'])
-            a['criancas'] = int(input("Novas crianças: ").strip() or a['criancas'])
-            nv = input("Novo valor: ").strip()
-            if nv: # Se o usuário não digitar nada, mantém o valor atual
-                a['valor'] = float(nv)
-            nova.append(format_apartamento(a))
-        else:
-            nova.append(linha)
-    if not achou:
-        print("Não encontrado.")
-    else:
-        gravar_arquivo('apartamentos.txt', nova)
-        print("Alterado.")
+            nova_descricao = input("Nova descrição (deixe vazio para manter): ").strip()
+            if nova_descricao:
+                a['descricao'] = nova_descricao
 
-def excluir_apartamento():
+            novo_adultos = input("Novos adultos (deixe vazio para manter): ").strip()
+            if novo_adultos:
+                while True:
+                    try:
+                        valor = int(novo_adultos)
+                        if valor < 0:
+                            print("❌ O número de adultos não pode ser negativo.")
+                            novo_adultos = input("Novos adultos (deixe vazio para manter): ").strip()
+                        else:
+                            a['adultos'] = valor
+                            break
+                    except:
+                        print("❌ Entrada inválida. Digite um número inteiro.")
+                        novo_adultos = input("Novos adultos (deixe vazio para manter): ").strip()
+
+            novo_criancas = input("Novas crianças (deixe vazio para manter): ").strip()
+            if novo_criancas:
+                while True:
+                    try:
+                        valor = int(novo_criancas)
+                        if valor < 0:
+                            print("❌ O número de crianças não pode ser negativo.")
+                            novo_criancas = input("Novas crianças (deixe vazio para manter): ").strip()
+                        else:
+                            a['criancas'] = valor
+                            break
+                    except:
+                        print("❌ Entrada inválida. Digite um número inteiro.")
+                        novo_criancas = input("Novas crianças (deixe vazio para manter): ").strip()
+
+            nv = input("Novo valor (deixe vazio para manter): ").strip()
+            if nv:
+                while True:
+                    try:
+                        valor = float(nv)
+                        if valor < 0:
+                            print("❌ O valor não pode ser negativo.")
+                            nv = input("Novo valor (deixe vazio para manter): ").strip()
+                        else:
+                            a['valor'] = valor
+                            break
+                    except:
+                        print("❌ Entrada inválida. Digite um número decimal.")
+                        nv = input("Novo valor (deixe vazio para manter): ").strip()
+
+            print("✅ Apartamento alterado com sucesso.")
+            break
+    if not achou:
+        print("❌ Apartamento não encontrado.")
+
+def excluir_apartamento(apartamentos):
     codigo = input("Código a excluir: ").strip()
-    linhas = ler_arquivo('apartamentos.txt')
-    nova = []
     achou = False
-    for linha in linhas:
-        a = parse_apartamento(linha)
+    for a in apartamentos[:]:  # usando cópia da lista para evitar problemas no laço
         if a['codigo'] == codigo:
             achou = True
             print("Excluindo:", a)
-            if input("Confirmar? (S/N): ").strip().upper() != 'S':
-                nova.append(linha)
-        else:
-            nova.append(linha)
+            if input("Confirmar? (S/N): ").strip().upper() == 'S':
+                apartamentos.remove(a)
+                print("✅ Apartamento excluído com sucesso.")
+            else:
+                print("❌ Exclusão cancelada.")
+            break
     if not achou:
-        print("Não encontrado.")
-    else:
-        gravar_arquivo('apartamentos.txt', nova)
-        print("Apartamento excluído com sucesso.")
+        print("❌ Apartamento não encontrado.")
+
 
 def submenu_apartamentos():
+    linhas = ler_arquivo('apartamentos.txt')
+    apartamentos = []
+    for linha in linhas:
+        apartamento = parse_apartamento(linha)
+        if apartamento:
+            apartamentos.append(apartamento)
+
     while True:
         print("\n" + "─"*40)
         print("        GERENCIAMENTO DE APARTAMENTOS")
@@ -502,20 +559,18 @@ def submenu_apartamentos():
         print("│  3 │ Cadastrar Novo Apartamento")
         print("│  4 │ Alterar Dados do Apartamento")
         print("│  5 │ Excluir Apartamento")
-        print("│  0 │ Voltar ao Menu Principal")
+        print("│  0 │ Voltar ao Menu Principal e Salvar Alterações")
         print("─"*40)
         
         opcao = input("Digite sua opção [0-5]: ").strip()
         
         if opcao == '1':
-            listar_apartamentos()
-         
-            
-        elif opcao == '2':
+            listar_apartamentos(apartamentos)
 
+        elif opcao == '2':
             codigo = input("\n📋 Digite o código do apartamento: ").strip()
             if codigo:
-                apartamento = buscar_apartamento(codigo)
+                apartamento = buscar_apartamento(codigo, apartamentos)
                 if apartamento:
                     print(f"\n✅ Apartamento encontrado:")
                     for key, value in apartamento.items():
@@ -524,31 +579,34 @@ def submenu_apartamentos():
                     print("\n❌ Apartamento não encontrado.")
             else:
                 print("\n⚠️  Código não pode estar vazio.")
-
-            #Input para continuar, mantendo a informação na tela como foco
             input("\nPressione ENTER para continuar...")
-       
-           
-            
+
         elif opcao == '3':
-            incluir_apartamento()
-    
-            
+            incluir_apartamento(apartamentos)
+
         elif opcao == '4':
-            alterar_apartamento()
-        
-            
+            alterar_apartamento(apartamentos)
+
         elif opcao == '5':
-            excluir_apartamento()
-       
-            
+            excluir_apartamento(apartamentos)
+
         elif opcao == '0':
-            print("\n🔙 Voltando ao menu principal...")
+            linhas_formatadas = []
+            for ap in apartamentos:
+                linha_formatada = format_apartamento(ap)
+                linhas_formatadas.append(linha_formatada)
+
+            gravar_arquivo('apartamentos.txt', linhas_formatadas)
+            print("\n💾 Alterações salvas com sucesso!")
+            print("🔙 Voltando ao menu principal...")
             break
-            
+
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
             input("Pressione ENTER para continuar...")
+
+
+
 
 
 
