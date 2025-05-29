@@ -298,9 +298,15 @@ def alterar_reserva(reservas, clientes):
     print("Dados atuais da reserva:")
     print(f"Código: {r['codigo']}, CPF: {r['cpf']}")
     novo_cpf = input("Novo CPF do cliente (ENTER para manter): ").strip() or r['cpf']
-    if not any(c['cpf'] == novo_cpf for c in clientes):
+    encontrado = False
+    for c in clientes:
+        if c['cpf'] == novo_cpf:
+            encontrado = True
+            break
+    if not encontrado:
         print("Cliente não encontrado.")
         return
+    
     r['cpf'] = novo_cpf
     print("Reserva alterada.")
 
@@ -783,30 +789,20 @@ def submenu_reserva_apto():
 
         elif opcao == '3':
             reservas_apto = incluir_reserva_apto(reservas_apto)
-            lista_reservas_formatadas = []
-            for ra in reservas_apto:
-                lista_reservas_formatadas.append(format_reserva_apto(ra))
-
-            gravar_arquivo('reserva_apartamentos.txt', lista_reservas_formatadas)
 
         elif opcao == '4':
             reservas_apto = alterar_reserva_apto(reservas_apto)
-            lista_reservas_formatadas = []
-            for ra in reservas_apto:
-                lista_reservas_formatadas.append(format_reserva_apto(ra))
-
-            gravar_arquivo('reserva_apartamentos.txt', lista_reservas_formatadas)
 
         elif opcao == '5':
             reservas_apto = excluir_reserva_apto(reservas_apto)
+
+        elif opcao == '0':
+            print("\n🔙 Voltando ao menu principal...")
             lista_reservas_formatadas = []
             for ra in reservas_apto:
                 lista_reservas_formatadas.append(format_reserva_apto(ra))
 
             gravar_arquivo('reserva_apartamentos.txt', lista_reservas_formatadas)
-
-        elif opcao == '0':
-            print("\n🔙 Voltando ao menu principal...")
             break
 
         else:
@@ -857,7 +853,7 @@ def imprimir_relatorio_reservas_apartamento(reservas, apartamentos):
 
         for linha in relatorio:
             partes = linha.strip().split(';')
-            reserva = buscar_reserva(reservas, partes[0])
+            reserva = buscar_reserva(partes[0], reservas )
             apartamento = buscar_apartamento(partes[1], apartamentos)
 
             print("Reserva:")
@@ -900,7 +896,7 @@ def imprimir_relatorio_reservas_cliente(reservas, apartamentos):
 
         for linha in relatorio:
             partes = linha.strip().split(';')
-            reserva = buscar_reserva(reservas, partes[0])
+            reserva = buscar_reserva(partes[0], reservas)
             apartamento = buscar_apartamento(partes[1], apartamentos)
 
             print("Reserva:")
@@ -932,9 +928,9 @@ def relatorio_reservas_por_periodo(clientes, apartamentos, reservas, reservas_ap
             data_sai = ra['data_saida']
 
             if (data_inicio <= data_ent <= data_fim) or (data_inicio <= data_sai <= data_fim):
-                reserva = buscar_reserva(reservas, ra['cod_res'])
+                reserva = buscar_reserva(ra['cod_res'],reservas )
                 apartamento = buscar_apartamento(ra['cod_apa'], apartamentos)
-                cliente = buscar_cliente(clientes, reserva['cpf'])
+                cliente = buscar_cliente(reserva['cpf'],clientes )
 
                 if reserva is None or apartamento is None or cliente is None:
                     continue
