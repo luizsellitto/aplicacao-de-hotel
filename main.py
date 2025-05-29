@@ -153,12 +153,12 @@ def alterar_cliente():
                 nova_lista.append(linha)
 
             
-            if not achou:
-                print("Cliente não encontrado.")
-                return
-            else:
-                gravar_arquivo('clientes.txt', nova_lista)
-                print("Cliente alterado.")
+        if not achou:
+            print("Cliente não encontrado.")
+            return
+        else:
+            gravar_arquivo('clientes.txt', nova_lista)
+            print("Cliente alterado.")
         
     except Exception as e:
         print(f"Erro ao alterar cliente: {e}")
