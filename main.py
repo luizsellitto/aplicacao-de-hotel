@@ -183,8 +183,8 @@ def excluir_cliente(clientes):
 
 
 def submenu_clientes():
-  nome_arquivo = 'clientes.txt'
-  linhas = ler_arquivo(nome_arquivo)
+  cliente_arquivo = 'clientes.txt'
+  linhas = ler_arquivo(cliente_arquivo)
   clientes = [] # Lista para armazenar os clientes (um dic para cada cliente)
   for l in linhas:
         cliente = parse_cliente(l)
@@ -245,7 +245,7 @@ def submenu_clientes():
   for c in clientes:
         linha_formatada = format_cliente(c)
         novas_linhas.append(linha_formatada)
-  if gravar_arquivo(nome_arquivo, novas_linhas):
+  if gravar_arquivo(cliente_arquivo, novas_linhas):
         print("Alterações salvas em arquivo.")
   else:
         print("Falha ao salvar alterações.")
@@ -262,88 +262,79 @@ def format_reserva(r):
     return f"{r['codigo']};{r['cpf']}"
 
 
-def listar_reservas():
-    linhas = ler_arquivo('reservas.txt')
-    reservas = []
-    for linha in linhas:
-        reservas.append(parse_reserva(linha))
+def listar_reservas(reservas):
     if not reservas:
         print("Sem reservas.")
-    else:
-        for r in reservas:
-            print(f"Código: {r['codigo']}, CPF do Cliente: {r['cpf']}")
+    
+    for r in reservas:
+        print(f"Código: {r['codigo']}, CPF do Cliente: {r['cpf']}")
 
-def buscar_reserva(codigo):
-    for linha in ler_arquivo('reservas.txt'):
-        r = parse_reserva(linha)
+def buscar_reserva(codigo, reservas):
+    for r in reservas:
         if r['codigo'] == codigo:
             return r
     return None
 
-def incluir_reserva():
+def incluir_reserva(reservas, clientes):
     codigo = input("Código da reserva: ").strip()
-    if buscar_reserva(codigo):
+    if buscar_reserva(codigo, reservas):
         print("Já existe uma reserva com esse código.")
         return
     cpf = input("CPF do cliente: ").strip()
-    if not buscar_cliente(cpf):
+    if not buscar_cliente(cpf, clientes):
         print("Cliente não encontrado.")
         return
-    r = {'codigo': codigo, 'cpf': cpf}
-    linhas = ler_arquivo('reservas.txt')
-    linhas.append(format_reserva(r))
-    gravar_arquivo('reservas.txt', linhas)
-    print("Reserva incluída com sucesso.")
+    
+    reservas.append({'codigo': codigo, 'cpf': cpf})
+    print("Reserva incluída.")
 
 
-def alterar_reserva():
+def alterar_reserva(reservas, clientes):
     codigo = input("Código da reserva a alterar: ").strip()
-    linhas = ler_arquivo('reservas.txt')
-    nova = []
-    achou = False
-    for linha in linhas:
-        r = parse_reserva(linha)
-        if r['codigo'] == codigo:
-            achou = True
-            print("Dados atuais da reserva:")
-            for key, value in r.items():
-                print(f"{key.capitalize()}: {value}")
-            r['cpf'] = input("Novo CPF do cliente: ").strip() or r['cpf']
-            if not buscar_cliente(r['cpf']):
-                print("Cliente não encontrado.")
-                return
-            nova.append(format_reserva(r))
-        else:
-            nova.append(linha)
-    if not achou:
+    r = buscar_reserva(codigo, reservas)
+    if not r:
         print("Reserva não encontrada.")
-    else:
-        gravar_arquivo('reservas.txt', nova)
-        print("Reserva alterada com sucesso.")
+        return
+    print("Dados atuais da reserva:")
+    print(f"Código: {r['codigo']}, CPF: {r['cpf']}")
+    novo_cpf = input("Novo CPF do cliente (ENTER para manter): ").strip() or r['cpf']
+    if not any(c['cpf'] == novo_cpf for c in clientes):
+        print("Cliente não encontrado.")
+        return
+    r['cpf'] = novo_cpf
+    print("Reserva alterada.")
 
-def excluir_reserva():
+def excluir_reserva(reservas):
     codigo = input("Código da reserva a excluir: ").strip()
-    linhas = ler_arquivo('reservas.txt')
-    nova = []
-    achou = False
-    for linha in linhas:
-        r = parse_reserva(linha)
-        if r['codigo'] == codigo:
-            achou = True
-            print("Excluindo reserva:")
-            for key, value in r.items():
-                print(f"{key.capitalize()}: {value}")
-            confirmacao = input("Confirmar exclusão? (S/N): ").strip().upper()
-            if confirmacao == 'S':
-                print("Reserva excluída com sucesso.")
-                continue
-        nova.append(linha)
-    if not achou:
+    r = buscar_reserva(codigo, reservas)
+    if not r:
         print("Reserva não encontrada.")
+        return
+    print("Excluindo reserva:")
+    print(f"Código: {r['codigo']}, CPF: {r['cpf']}")
+    if input("Confirmar exclusão (S/N): ").strip().upper() == 'S':
+        reservas.remove(r)
+        print("Reserva excluída em memória.")
     else:
-        gravar_arquivo('reservas.txt', nova)
+        print("Cancelado.")
 
 def submenu_reservas():
+    reserva_arquivo = 'reservas.txt'
+    linhas = ler_arquivo(reserva_arquivo)
+    reservas = []  # Lista para armazenar as reservas (um dic para cada reserva
+    for l in linhas:
+        reserva = parse_reserva(l)
+        if reserva is not None:
+            reservas.append(reserva)
+    
+    cliente_arquivo = 'clientes.txt'
+    linhas = ler_arquivo(cliente_arquivo)
+    clientes = [] # Lista para armazenar os clientes (um dic para cada cliente)
+    for l in linhas:
+        cliente = parse_cliente(l)
+        if cliente is not None:
+            clientes.append(cliente)
+
     while True:
         print("\n" + "─"*40)
         print("         GERENCIAMENTO DE RESERVAS")
@@ -359,11 +350,11 @@ def submenu_reservas():
         opcao = input("Digite sua opção [0-5]: ").strip()
         
         if opcao == '1':
-            listar_reservas()
+            listar_reservas(reservas)
         elif opcao == '2':
             codigo = input("\n📋 Digite o código da reserva: ").strip()
             if codigo:
-                reserva = buscar_reserva(codigo)
+                reserva = buscar_reserva(codigo, reservas)
                 if reserva:
                     print(f"\n✅ Reserva encontrada:")
                     for key, value in reserva.items():
@@ -377,17 +368,26 @@ def submenu_reservas():
             input("\nPressione ENTER para continuar...")
             
         elif opcao == '3':
-            incluir_reserva()     
+            incluir_reserva(reservas, clientes)     
         elif opcao == '4':
-            alterar_reserva()    
+            alterar_reserva(reservas, clientes)    
         elif opcao == '5':
-            excluir_reserva()     
+            excluir_reserva(reservas)     
         elif opcao == '0':
             print("\n🔙 Voltando ao menu principal...")
             break     
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
             input("Pressione ENTER para continuar...")
+    
+    novas_linhas = []
+    for r in reservas:
+        linha_formatada = format_reserva(r)
+        novas_linhas.append(linha_formatada)
+    if gravar_arquivo(reserva_arquivo, novas_linhas):
+        print("Alterações salvas em arquivo.")
+    else:
+        print("Falha ao salvar alterações.")
 
 
 
