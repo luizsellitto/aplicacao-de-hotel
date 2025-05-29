@@ -667,10 +667,23 @@ def buscar_reserva_apto(reservas_apto, cod_res, cod_apa):
             return ra
     return None
 
-def incluir_reserva_apto(reservas_apto):
+def incluir_reserva_apto(reservas_apto, reservas):
     cod_res = input("Código da reserva: ").strip()
+    
+    # verifica se existe alguma reserva com o código informado
+    existe_reserva = False
+    for r in reservas:
+        if r['codigo'] == cod_res:
+            existe_reserva = True
+            break
+
+    if not existe_reserva:
+        print("❌ Não existe uma reserva com esse código.")
+        return reservas_apto
+
     cod_apa = input("Código do apartamento: ").strip()
 
+    # Verifica se já existe uma reserva para o mesmo código e apartamento
     if buscar_reserva_apto(reservas_apto, cod_res, cod_apa):
         print("❌ Já existe uma reserva com esse código e apartamento.")
         return reservas_apto
@@ -686,10 +699,16 @@ def incluir_reserva_apto(reservas_apto):
         print("❌ Não é possível realizar a reserva devido a conflito de datas.")
         return reservas_apto
 
-    ra = {'cod_res': cod_res, 'cod_apa': cod_apa, 'data_entrada': data_entrada, 'data_saida': data_saida}
+    ra = {
+        'cod_res': cod_res,
+        'cod_apa': cod_apa,
+        'data_entrada': data_entrada,
+        'data_saida': data_saida
+    }
     reservas_apto.append(ra)
     print("✅ Reserva de apartamento incluída com sucesso.")
     return reservas_apto
+
 
 def alterar_reserva_apto(reservas_apto):
     cod_res = input("Reserva: ").strip()
@@ -733,7 +752,7 @@ def excluir_reserva_apto(reservas_apto):
     cod_res = input("Reserva: ").strip()
     cod_apa = input("Apartamento: ").strip()
     achou = False
-    for ra in reservas_apto[:]:  # Iterar sobre cópia da lista
+    for ra in reservas_apto[:]:  # iterar sobre cópia da lista
         if ra['cod_res'] == cod_res and ra['cod_apa'] == cod_apa:
             achou = True
             print("Excluindo:", ra)
@@ -753,6 +772,11 @@ def submenu_reserva_apto():
     for linha in linhas_reservas_apto:
         reserva_apto = parse_reserva_apto(linha)
         reservas_apto.append(reserva_apto)
+    reservas = []
+    linhas_reservas = ler_arquivo('reservas.txt')
+    for linha in linhas_reservas:
+        reserva = parse_reserva(linha)
+        reservas.append(reserva)
 
     while True:
         print("\n" + "─"*45)
@@ -788,13 +812,13 @@ def submenu_reserva_apto():
             input("\nPressione ENTER para continuar...")
 
         elif opcao == '3':
-            reservas_apto = incluir_reserva_apto(reservas_apto)
+            incluir_reserva_apto(reservas_apto, reservas)
 
         elif opcao == '4':
-            reservas_apto = alterar_reserva_apto(reservas_apto)
+            alterar_reserva_apto(reservas_apto)
 
         elif opcao == '5':
-            reservas_apto = excluir_reserva_apto(reservas_apto)
+            excluir_reserva_apto(reservas_apto)
 
         elif opcao == '0':
             print("\n🔙 Voltando ao menu principal...")
