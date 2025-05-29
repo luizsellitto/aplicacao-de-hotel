@@ -3,7 +3,7 @@
 # Importa OS para manipulação de arquivos
 import os
 # Importa datetime para manipulação mais precisa de datas
-from datetime import datetime
+from datetime import datetime, date
 
 
 # =============== Helpers =========================
@@ -81,6 +81,21 @@ def buscar_cliente(cpf, clientes):
             return c
     return None
 
+
+def obter_idade_valida(data_nasc):
+    hoje = date.today()
+    idade = hoje.year - data_nasc.year - ((hoje.month, hoje.day) < (data_nasc.month, data_nasc.day))
+    while idade <= 0 or idade >= 130:
+        print(f"Idade inválida ({idade} anos). A idade deve estar entre 1 e 129 anos.")
+        try:
+            data_str = input("Digite novamente a data de nascimento (YYYY-MM-DD): ").strip()
+            data_nasc = datetime.strptime(data_str, '%Y-%m-%d').date()
+            idade = hoje.year - data_nasc.year - ((hoje.month, hoje.day) < (data_nasc.month, data_nasc.day))
+        except ValueError:
+            print("Formato de data inválido.")
+            continue
+    return data_nasc
+
 def incluir_cliente(clientes):
     # Pegar as informações do cliente
     cpf = input("CPF: ").strip()
@@ -91,7 +106,13 @@ def incluir_cliente(clientes):
     endereco = input("Endereço: ").strip()
     tel_fixo = input("Telefone fixo: ").strip()
     tel_cel = input("Telefone celular: ").strip()
-    data_nasc = datetime.strptime(input("Data de nascimento (YYYY-MM-DD): "), '%Y-%m-%d').date()
+    while True:
+        try:
+            data_nasc = datetime.strptime(input("Data de nascimento (YYYY-MM-DD): "), '%Y-%m-%d').date()
+            data_nasc = obter_idade_valida(data_nasc)
+            break
+        except ValueError:
+            print("Formato de data inválido. Tente novamente.")
 
     clientes.append({
         'cpf': cpf,
@@ -123,11 +144,12 @@ def alterar_cliente(clientes):
         data_str = input("Nova Data de nascimento (YYYY-MM-DD, ENTER para manter): ").strip()
         if data_str:
             try:
-                data_nasc = datetime.strptime(data_str, '%Y-%m-%d').date()
+                nova_data = datetime.strptime(data_str, '%Y-%m-%d').date()
+                nova_data = obter_idade_valida(nova_data)
+                cliente['data_nasc'] = nova_data
             except ValueError:
                 print("Formato de data inválido. Alteração cancelada.")
                 return
-            cliente['data_nasc'] = data_nasc
 
         cliente.update({
             'nome': nome,
@@ -135,8 +157,8 @@ def alterar_cliente(clientes):
             'tel_fixo': tel_fixo,
             'tel_cel': tel_cel
         })
-        print("Cliente alterado")
 
+        print("Cliente alterado")
     except Exception as e:
         print(f"Erro ao alterar cliente: {e}")
         return
