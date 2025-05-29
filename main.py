@@ -739,8 +739,11 @@ def excluir_reserva_apto(reservas_apto):
 
 
 def submenu_reserva_apto():
-    linhas = ler_arquivo('reserva_apartamentos.txt')
-    reservas_apto = [parse_reserva_apto(linha) for linha in linhas]
+    reservas_apto = []
+    linhas_reservas_apto = ler_arquivo('reserva_apartamentos.txt')
+    for linha in linhas_reservas_apto:
+        reserva_apto = parse_reserva_apto(linha)
+        reservas_apto.append(reserva_apto)
 
     while True:
         print("\n" + "─"*45)
@@ -982,10 +985,30 @@ def imprimir_relatorio_por_periodo():
 
 def submenu_relatorios():
     # lê tudo uma vez
-    clientes = [parse_cliente(l) for l in ler_arquivo('clientes.txt')]
-    apartamentos = [parse_apartamento(l) for l in ler_arquivo('apartamentos.txt')]
-    reservas = [parse_reserva(l) for l in ler_arquivo('reservas.txt')]
-    reservas_apto = [parse_reserva_apto(l) for l in ler_arquivo('reserva_apartamentos.txt')]
+    clientes = []
+    linhas_clientes = ler_arquivo('clientes.txt')
+    for linha in linhas_clientes:
+        cliente = parse_cliente(linha)
+        clientes.append(cliente)
+
+    apartamentos = []
+    linhas_apartamentos = ler_arquivo('apartamentos.txt')
+    for linha in linhas_apartamentos:
+        apartamento = parse_apartamento(linha)
+        apartamentos.append(apartamento)
+
+    reservas = []
+    linhas_reservas = ler_arquivo('reservas.txt')
+    for linha in linhas_reservas:
+        reserva = parse_reserva(linha)
+        reservas.append(reserva)
+
+    reservas_apto = []
+    linhas_reservas_apto = ler_arquivo('reserva_apartamentos.txt')
+    for linha in linhas_reservas_apto:
+        reserva_apto = parse_reserva_apto(linha)
+        reservas_apto.append(reserva_apto)
+
 
     while True:
         print("\n" + "─"*45)
