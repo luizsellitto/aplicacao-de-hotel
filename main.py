@@ -62,6 +62,15 @@ def format_cliente(c):
     return f"{c['cpf']};{c['nome']};{c['endereco']};{c['tel_fixo']};{c['tel_cel']};{c['data_nasc'].isoformat()}" 
     # isoformat() converte a data para o formato YYYY-MM-DD
 
+def carregar_clientes(cliente_arquivo='clientes.txt'):
+    linhas = ler_arquivo(cliente_arquivo)
+    clientes = []
+    for l in linhas:
+        cliente = parse_cliente(l)
+        if cliente is not None:
+            clientes.append(cliente)
+    return clientes
+
 def listar_clientes(clientes):
     try:
         if not clientes:
@@ -163,8 +172,6 @@ def alterar_cliente(clientes):
         print(f"Erro ao alterar cliente: {e}")
         return
 
-    
-
 def excluir_cliente(clientes):
     cpf = input("CPF do cliente a excluir: ").strip()
     cliente = buscar_cliente(cpf, clientes)
@@ -183,13 +190,8 @@ def excluir_cliente(clientes):
 
 
 def submenu_clientes():
-  cliente_arquivo = 'clientes.txt'
-  linhas = ler_arquivo(cliente_arquivo)
-  clientes = [] # Lista para armazenar os clientes (um dic para cada cliente)
-  for l in linhas:
-        cliente = parse_cliente(l)
-        if cliente is not None:
-            clientes.append(cliente)
+  clientes_arquivo= 'clientes.txt'
+  clientes = carregar_clientes(clientes_arquivo)
 
   while True:
         print("\n" + "─"*40)
@@ -245,7 +247,7 @@ def submenu_clientes():
   for c in clientes:
         linha_formatada = format_cliente(c)
         novas_linhas.append(linha_formatada)
-  if gravar_arquivo(cliente_arquivo, novas_linhas):
+  if gravar_arquivo(clientes_arquivo, novas_linhas):
         print("Alterações salvas em arquivo.")
   else:
         print("Falha ao salvar alterações.")
@@ -261,6 +263,14 @@ def parse_reserva(linha):
 def format_reserva(r):
     return f"{r['codigo']};{r['cpf']}"
 
+def carregar_reservas(reserva_arquivo='reservas.txt'):
+    linhas = ler_arquivo(reserva_arquivo)
+    reservas = []
+    for l in linhas:
+        reserva = parse_reserva(l)
+        if reserva is not None:
+            reservas.append(reserva)
+    return reservas
 
 def listar_reservas(reservas):
     if not reservas:
@@ -324,22 +334,13 @@ def excluir_reserva(reservas):
     else:
         print("Cancelado.")
 
+
 def submenu_reservas():
     reserva_arquivo = 'reservas.txt'
-    linhas = ler_arquivo(reserva_arquivo)
-    reservas = []  # Lista para armazenar as reservas (um dic para cada reserva
-    for l in linhas:
-        reserva = parse_reserva(l)
-        if reserva is not None:
-            reservas.append(reserva)
-    
-    cliente_arquivo = 'clientes.txt'
-    linhas = ler_arquivo(cliente_arquivo)
-    clientes = [] # Lista para armazenar os clientes (um dic para cada cliente)
-    for l in linhas:
-        cliente = parse_cliente(l)
-        if cliente is not None:
-            clientes.append(cliente)
+    reservas = carregar_reservas(reserva_arquivo)
+
+    clientes_arquivo= 'clientes.txt'
+    clientes = carregar_clientes(clientes_arquivo)
 
     while True:
         print("\n" + "─"*40)
@@ -415,6 +416,15 @@ def parse_apartamento(linha):
 
 def format_apartamento(a):
     return f"{a['codigo']};{a['descricao']};{a['adultos']};{a['criancas']};{a['valor']}"
+
+def carregar_apartamentos(arquivo='apartamentos.txt'):
+    linhas = ler_arquivo(arquivo)
+    apartamentos = []
+    for linha in linhas:
+        apartamento = parse_apartamento(linha)
+        if apartamento:
+            apartamentos.append(apartamento)
+    return apartamentos
 
 def listar_apartamentos(apartamentos):
     if not apartamentos:
@@ -549,12 +559,8 @@ def excluir_apartamento(apartamentos):
 
 
 def submenu_apartamentos():
-    linhas = ler_arquivo('apartamentos.txt')
-    apartamentos = []
-    for linha in linhas:
-        apartamento = parse_apartamento(linha)
-        if apartamento:
-            apartamentos.append(apartamento)
+    
+    apartamentos = carregar_apartamentos('apartamentos.txt')
 
     while True:
         print("\n" + "─"*40)
@@ -651,6 +657,14 @@ def parse_reserva_apto(linha):
     except:
         print(f"Erro ao parsear vinculação: {linha}")
 
+def carregar_reservas_apto(arquivo='reserva_apartamentos.txt'):
+    linhas = ler_arquivo(arquivo)
+    reservas_apto = []
+    for linha in linhas:
+        reserva_apto = parse_reserva_apto(linha)
+        reservas_apto.append(reserva_apto)
+    return reservas_apto
+
 def format_reserva_apto(r):
     return f"{r['cod_res']};{r['cod_apa']};{r['data_entrada'].isoformat()};{r['data_saida'].isoformat()}"
 
@@ -709,7 +723,6 @@ def incluir_reserva_apto(reservas_apto, reservas):
     print("✅ Reserva de apartamento incluída com sucesso.")
     return reservas_apto
 
-
 def alterar_reserva_apto(reservas_apto):
     cod_res = input("Reserva: ").strip()
     cod_apa = input("Apartamento: ").strip()
@@ -746,8 +759,6 @@ def alterar_reserva_apto(reservas_apto):
     print("❌ Reserva de apartamento não encontrada.")
     return reservas_apto
 
-
-
 def excluir_reserva_apto(reservas_apto):
     cod_res = input("Reserva: ").strip()
     cod_apa = input("Apartamento: ").strip()
@@ -765,18 +776,10 @@ def excluir_reserva_apto(reservas_apto):
     if not achou:
         print("❌ Reserva não encontrada.")
 
-
 def submenu_reserva_apto():
-    reservas_apto = []
-    linhas_reservas_apto = ler_arquivo('reserva_apartamentos.txt')
-    for linha in linhas_reservas_apto:
-        reserva_apto = parse_reserva_apto(linha)
-        reservas_apto.append(reserva_apto)
-    reservas = []
-    linhas_reservas = ler_arquivo('reservas.txt')
-    for linha in linhas_reservas:
-        reserva = parse_reserva(linha)
-        reservas.append(reserva)
+    reservas_apto = carregar_reservas_apto('reserva_apartamentos.txt')
+
+    reservas = carregar_reservas('reservas.txt')
 
     while True:
         print("\n" + "─"*45)
@@ -1020,30 +1023,13 @@ def imprimir_relatorio_por_periodo():
 
 def submenu_relatorios():
     # lê tudo uma vez
-    clientes = []
-    linhas_clientes = ler_arquivo('clientes.txt')
-    for linha in linhas_clientes:
-        cliente = parse_cliente(linha)
-        clientes.append(cliente)
+    clientes = carregar_clientes('clientes.txt')
 
-    apartamentos = []
-    linhas_apartamentos = ler_arquivo('apartamentos.txt')
-    for linha in linhas_apartamentos:
-        apartamento = parse_apartamento(linha)
-        apartamentos.append(apartamento)
+    apartamentos = carregar_apartamentos('apartamentos.txt')
 
-    reservas = []
-    linhas_reservas = ler_arquivo('reservas.txt')
-    for linha in linhas_reservas:
-        reserva = parse_reserva(linha)
-        reservas.append(reserva)
+    reservas = carregar_reservas('reservas.txt')
 
-    reservas_apto = []
-    linhas_reservas_apto = ler_arquivo('reserva_apartamentos.txt')
-    for linha in linhas_reservas_apto:
-        reserva_apto = parse_reserva_apto(linha)
-        reservas_apto.append(reserva_apto)
-
+    reservas_apto = carregar_reservas_apto('reserva_apartamentos.txt')
 
     while True:
         print("\n" + "─"*45)
@@ -1078,11 +1064,6 @@ def submenu_relatorios():
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 6.")
             input("Pressione ENTER para continuar...")
-
-
-
-
-
 
 
 
