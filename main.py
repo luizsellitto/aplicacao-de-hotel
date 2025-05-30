@@ -864,12 +864,16 @@ def relatorio_reservas_por_apartamento(reservas_apto):
 
 def imprimir_relatorio_reservas_apartamento(reservas, apartamentos):
     codigo = input("Código do apartamento para leitura do relatório: ").strip()
+    if not buscar_apartamento(codigo, apartamentos):
+        print("Apartamento não encontrado.")
+        return
+    
     nome = f"relatorio_reservas_apto_{codigo}.txt"
 
     try:
         relatorio = ler_arquivo(nome)
         if not relatorio:
-            print("O relatório está vazio.")
+            print("O relatório não existe ou está vazio.")
             return
 
         print(f"\nRelatório de Reservas - Apartamento {codigo}")
@@ -894,7 +898,15 @@ def imprimir_relatorio_reservas_apartamento(reservas, apartamentos):
 
 def relatorio_reservas_por_cliente(reservas, reservas_apto):
     cpf = input("CPF do cliente: ").strip()
-    reservas_cliente_cod = [r['codigo'] for r in reservas if r['cpf'] == cpf]
+
+    if not buscar_cliente(cpf, reservas):
+        print("Cliente não encontrado.")
+        return
+    
+    reservas_cliente_cod = []
+    for r in reservas:
+        if r['cpf'] == cpf:
+            reservas_cliente_cod.append(r['codigo'])
 
     relatorio = []
     for ra in reservas_apto:
@@ -912,7 +924,7 @@ def imprimir_relatorio_reservas_cliente(reservas, apartamentos):
     try:
         relatorio = ler_arquivo(nome)
         if not relatorio:
-            print("O relatório está vazio.")
+            print("O relatório não existe ou está vazio.")
             return
 
         print(f"\nRelatório de Reservas - Cliente {cpf}")
@@ -985,7 +997,7 @@ def imprimir_relatorio_por_periodo():
         nome = f"relatorio_reservas_do_periodo_{data_inicio}_{data_fim}.txt"
         relatorio = ler_arquivo(nome)
         if not relatorio:
-            print("O relatório está vazio.")
+            print("O relatório não existe ou está vazio.")
             return
 
         print(f"\nRelatório por Período de {data_inicio} até {data_fim}")
