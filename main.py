@@ -1,5 +1,3 @@
-
-
 # Importa OS para manipulação de arquivos
 import os
 # Importa datetime para manipulação mais precisa de datas
@@ -26,7 +24,6 @@ def ler_arquivo(nome_arquivo):
         print(f"Erro ao ler o arquivo: {nome_arquivo}")
         return []
 
-
 def gravar_arquivo(nome_arquivo, linhas):
     try:
         with open(nome_arquivo, 'w', encoding='utf-8') as arquivo:
@@ -36,7 +33,6 @@ def gravar_arquivo(nome_arquivo, linhas):
     except:
         print(f"Erro ao gravar o arquivo: {nome_arquivo}")
         return False
-
 
 # =============== Clientes =========================
 
@@ -90,7 +86,6 @@ def buscar_cliente(cpf, clientes):
             return c
     return None
 
-
 def obter_idade_valida(data_nasc):
     hoje = date.today()
     idade = hoje.year - data_nasc.year - ((hoje.month, hoje.day) < (data_nasc.month, data_nasc.day))
@@ -133,7 +128,6 @@ def incluir_cliente(clientes):
     })
     print("Cliente incluído.")
 
-
 def alterar_cliente(clientes):
     try:
         cpf = input("Digite o CPF do cliente a ser alterado: ").strip()
@@ -146,7 +140,7 @@ def alterar_cliente(clientes):
         for k, v in cliente.items():
             print(f"{k.capitalize()}: {v}")
 
-        nome = input("Novo Nome (ENTER para manter): ").strip() or cliente['nome']
+        nome = input("\nNovo Nome (ENTER para manter): ").strip() or cliente['nome']
         endereco = input("Novo Endereço (ENTER para manter): ").strip() or cliente['endereco']
         tel_fixo = input("Novo Telefone fixo (ENTER para manter): ").strip() or cliente['tel_fixo']
         tel_cel = input("Novo Telefone celular (ENTER para manter): ").strip() or cliente['tel_cel']
@@ -178,16 +172,15 @@ def excluir_cliente(clientes):
     if not cliente:
         print("Cliente não encontrado.")
         return
-    print("Vai excluir:")
+    print("\nVai excluir:")
     for k, v in cliente.items():
         print(f"{k.capitalize()}: {v}")
-    confirm = input("Tem certeza que deseja excluir este cliente? (S/N): ").strip().upper()
+    confirm = input("\nTem certeza que deseja excluir este cliente? (S/N): ").strip().upper()
     if confirm == 'S':
         clientes.remove(cliente)
         print("Cliente excluído")
     else:
         print("Exclusão cancelada.")
-
 
 def submenu_clientes():
   clientes_arquivo= 'clientes.txt'
@@ -253,7 +246,6 @@ def submenu_clientes():
         print("Falha ao salvar alterações.")
 
 
-
 # =============== Reservas =========================
 
 def parse_reserva(linha):
@@ -298,15 +290,14 @@ def incluir_reserva(reservas, clientes):
     reservas.append({'codigo': codigo, 'cpf': cpf})
     print("Reserva incluída.")
 
-
 def alterar_reserva(reservas, clientes):
     codigo = input("Código da reserva a alterar: ").strip()
     r = buscar_reserva(codigo, reservas)
     if not r:
         print("Reserva não encontrada.")
         return
-    print("Dados atuais da reserva:")
-    print(f"Código: {r['codigo']}, CPF: {r['cpf']}")
+    print("\nDados atuais da reserva:")
+    print(f"Código: {r['codigo']}, CPF: {r['cpf']}\n")
     novo_cpf = input("Novo CPF do cliente (ENTER para manter): ").strip() or r['cpf']
     encontrado = False
     for c in clientes:
@@ -326,14 +317,13 @@ def excluir_reserva(reservas):
     if not r:
         print("Reserva não encontrada.")
         return
-    print("Excluindo reserva:")
-    print(f"Código: {r['codigo']}, CPF: {r['cpf']}")
+    print("\nExcluindo reserva:")
+    print(f"Código: {r['codigo']}, CPF: {r['cpf']}\n")
     if input("Confirmar exclusão (S/N): ").strip().upper() == 'S':
         reservas.remove(r)
         print("Reserva excluída em memória.")
     else:
         print("Cancelado.")
-
 
 def submenu_reservas():
     reserva_arquivo = 'reservas.txt'
@@ -395,7 +385,6 @@ def submenu_reservas():
         print("Alterações salvas em arquivo.")
     else:
         print("Falha ao salvar alterações.")
-
 
 
 
@@ -486,7 +475,12 @@ def alterar_apartamento(apartamentos):
     for a in apartamentos:
         if a['codigo'] == codigo:
             achou = True
-            print("Atual:", a)
+            print("\nDados atuais:")
+            print(f"Código: {a['codigo']}")
+            print(f"Descrição: {a['descricao']}")
+            print(f"Capacidade: {a['adultos']} adulto(s), {a['criancas']} criança(s)")
+            print(f"Valor por dia: R$ {a['valor']:.2f}\n")
+
             nova_descricao = input("Nova descrição (deixe vazio para manter): ").strip()
             if nova_descricao:
                 a['descricao'] = nova_descricao
@@ -547,7 +541,11 @@ def excluir_apartamento(apartamentos):
     for a in apartamentos[:]:  # usando cópia da lista para evitar problemas no laço
         if a['codigo'] == codigo:
             achou = True
-            print("Excluindo:", a)
+            print("\nExcluir:")
+            print(f"Código: {a['codigo']}")
+            print(f"Descrição: {a['descricao']}")
+            print(f"Capacidade: {a['adultos']} adulto(s), {a['criancas']} criança(s)")
+            print(f"Valor por dia: R$ {a['valor']:.2f}\n")
             if input("Confirmar? (S/N): ").strip().upper() == 'S':
                 apartamentos.remove(a)
                 print("✅ Apartamento excluído com sucesso.")
@@ -616,22 +614,6 @@ def submenu_apartamentos():
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
             input("Pressione ENTER para continuar...")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # =============== ReservaApart =========================
@@ -729,7 +711,11 @@ def alterar_reserva_apto(reservas_apto):
     
     for ra in reservas_apto:
         if ra['cod_res'] == cod_res and ra['cod_apa'] == cod_apa:
-            print("Atual:", ra)
+            print("\nAtualizando reserva com os seguintes dados:")
+            print(f"Código da reserva: {ra['cod_res']}")
+            print(f"Código do apto: {ra['cod_apa']}")
+            print(f"Data de entrada: {ra['data_entrada'].strftime('%d/%m/%Y')}")
+            print(f"Data de saída: {ra['data_saida'].strftime('%d/%m/%Y')}\n")
             data_entrada = input("Nova entrada (YYYY-MM-DD): ").strip()
             data_saida = input("Nova saída (YYYY-MM-DD): ").strip()
 
@@ -766,7 +752,11 @@ def excluir_reserva_apto(reservas_apto):
     for ra in reservas_apto[:]:  # iterar sobre cópia da lista
         if ra['cod_res'] == cod_res and ra['cod_apa'] == cod_apa:
             achou = True
-            print("Excluindo:", ra)
+            print("\nExcluindo reserva com os seguintes dados:")
+            print(f"Código da reserva: {ra['cod_res']}")
+            print(f"Código do apto: {ra['cod_apa']}")
+            print(f"Data de entrada: {ra['data_entrada'].strftime('%d/%m/%Y')}")
+            print(f"Data de saída: {ra['data_saida'].strftime('%d/%m/%Y')}\n")
             if input("Confirmar? (S/N): ").strip().upper() == 'S':
                 reservas_apto.remove(ra)
                 print("✅ Reserva excluída com sucesso.")
@@ -835,17 +825,6 @@ def submenu_reserva_apto():
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 0 e 5.")
             input("Pressione ENTER para continuar...")
-
-
-
-
-
-
-
-
-
-
-
 
 
 # =============== Relatórios =========================
@@ -1102,6 +1081,5 @@ def main():
         else:
             print("\n❌ Opção inválida! Por favor, escolha uma opção entre 1 e 6.")
             input("Pressione ENTER para continuar...")
-
 
 main()
