@@ -663,7 +663,7 @@ def buscar_reserva_apto(reservas_apto, cod_res, cod_apa):
             return ra
     return None
 
-def incluir_reserva_apto(reservas_apto, reservas):
+def incluir_reserva_apto(reservas_apto, reservas, apartamentos):
     cod_res = input("Código da reserva: ").strip()
     
     # verifica se existe alguma reserva com o código informado
@@ -678,6 +678,17 @@ def incluir_reserva_apto(reservas_apto, reservas):
         return reservas_apto
 
     cod_apa = input("Código do apartamento: ").strip()
+
+    # verifica se o apartamento existe
+    existe_apartamento = False
+    for a in apartamentos:
+        if a['codigo'] == cod_apa:
+            existe_apartamento = True
+            break
+
+    if not existe_apartamento:
+        print("❌ Não existe um apartamento com esse código.")
+        return reservas_apto
 
     # Verifica se já existe uma reserva para o mesmo código e apartamento
     if buscar_reserva_apto(reservas_apto, cod_res, cod_apa):
@@ -771,6 +782,8 @@ def submenu_reserva_apto():
 
     reservas = carregar_reservas('reservas.txt')
 
+    apartamentos = carregar_apartamentos('apartamentos.txt')
+
     while True:
         print("\n" + "─"*45)
         print("       GERENCIAMENTO DE RESERVA-APARTAMENTO")
@@ -805,7 +818,7 @@ def submenu_reserva_apto():
             input("\nPressione ENTER para continuar...")
 
         elif opcao == '3':
-            incluir_reserva_apto(reservas_apto, reservas)
+            incluir_reserva_apto(reservas_apto, reservas, apartamentos)
 
         elif opcao == '4':
             alterar_reserva_apto(reservas_apto)
